@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { API_BASE_URL } from './baseServiceConfig';
 
-const apiUrl = 'http://localhost:8000/api/subscriber-types/'; // Adjust the URL to your API endpoint
+const apiUrl = API_BASE_URL+'/api/subscriber-types/'; // Adjust the URL to your API endpoint
 
 const getSubscriberTypes = () => {
   return axios.get(apiUrl);

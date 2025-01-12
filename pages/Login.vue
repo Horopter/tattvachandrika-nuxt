@@ -188,6 +188,7 @@
 <script>
 import axios from "axios"; // Ensure axios is installed and imported
 import ToastMessage from "./ToastMessage.vue"; // A simple toast message component
+import { API_BASE_URL } from "~/services/baseServiceConfig";
 
 export default {
   components: {
@@ -285,7 +286,7 @@ export default {
     async login() {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/adminusers/login/",
+          API_BASE_URL+"/api/adminusers/login/",
           this.loginData
         );
         localStorage.setItem('token', response.data.token);
@@ -300,7 +301,7 @@ export default {
         // Only proceed if validation is successful
         try {
           const response = await axios.post(
-            "http://localhost:8000/api/adminusers/signup/",
+            API_BASE_URL+"/api/adminusers/signup/",
             {
               username: this.signupData.username,
               email: this.signupData.email,

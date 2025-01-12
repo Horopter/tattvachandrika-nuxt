@@ -1,6 +1,7 @@
 import axios from 'axios';
+import API_BASE_URL from './baseServiceConfig';
 
-const apiUrl = 'http://localhost:8000/api/subscribers/';
+const apiUrl = API_BASE_URL+'/api/subscribers/';
 
 const getMagazineSubscribers = () => {
   return axios.get(apiUrl);
@@ -27,11 +28,11 @@ const activateMagazineSubscriber = (id) => {
 };
 
 const getCategories = () => {
-  return axios.get('http://localhost:8000/api/subscriber-categories/');
+  return axios.get(API_BASE_URL+'/api/subscriber-categories/');
 };
 
 const getTypes = () => {
-  return axios.get('http://localhost:8000/api/subscriber-types/');
+  return axios.get(API_BASE_URL+'/api/subscriber-types/');
 };
 
 export default {

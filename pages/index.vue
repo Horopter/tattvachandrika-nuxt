@@ -165,7 +165,7 @@
         </div>
         <div class="m-8 p-4 bg-orange-100">
           <h1 class="text-2xl font-semibold font-sans text-center text-orange-950">Want to be a subscriber to Sri Tattvachandrika Monthly Magazine of Sri Vyasaraja Mutt ? </h1>
-          <h1 class="text-xl font-semibold font-sans underline text-red-500 text-center mt-5"><nuxt-link to="HomePage" target="_blank">Click Here</nuxt-link></h1> 
+          <h1 class="text-xl font-semibold font-sans underline text-red-500 text-center mt-5"><nuxt-link to="Login" target="_blank">Click Here</nuxt-link></h1> 
           
         </div>
 

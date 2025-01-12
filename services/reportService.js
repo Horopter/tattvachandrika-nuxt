@@ -1,6 +1,7 @@
 import axios from 'axios';
+import API_BASE_URL from './baseServiceConfig';
 
-const apiUrl = 'http://localhost:8000/api/subscribers/';
+const apiUrl = API_BASE_URL+'/api/subscribers/';
 
 const getReport = (filters) => {
   // `filters` is an object containing query parameters such as `status` and `userType`

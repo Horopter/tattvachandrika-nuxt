@@ -1,6 +1,7 @@
 import axios from 'axios';
+import API_BASE_URL from './baseServiceConfig';
 
-const apiUrl = 'http://localhost:8000/api/payment-modes/';
+const apiUrl = API_BASE_URL+'/api/payment-modes/';
 
 const getPaymentModes = () => {
   return axios.get(apiUrl);

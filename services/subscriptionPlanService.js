@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { API_BASE_URL } from './baseServiceConfig';
 
-const apiUrl = 'http://localhost:8000/api/subscription-plans/';
-const languageApiUrl = 'http://localhost:8000/api/subscription-languages/';
-const modeApiUrl = 'http://localhost:8000/api/subscription-modes/';
+const apiUrl = API_BASE_URL+'/api/subscription-plans/';
+const languageApiUrl = API_BASE_URL+'/api/subscription-languages/';
+const modeApiUrl = API_BASE_URL+'/api/subscription-modes/';
 
 const getPlans = () => {
   return axios.get(apiUrl);

@@ -290,6 +290,7 @@ export default {
           this.loginData
         );
         localStorage.setItem('token', response.data.token);
+        console.log('Token sent by remote: '+ response);
         this.$router.push({ name: "HomePage" }); // Redirect to homepage
       } catch (error) {
         console.error("Login failed:", error.response.data);

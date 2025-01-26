@@ -1,26 +1,62 @@
 import axios from 'axios';
 import { API_BASE_URL } from './baseServiceConfig';
 
-const apiUrl = API_BASE_URL+'/api/subscriber-types/'; // Adjust the URL to your API endpoint
+const apiUrl = `${API_BASE_URL}/api/subscriber-types/`;
+
+const getToken = () => {
+  if (import.meta.client) {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
+
+const axiosInstance = axios.create({
+  baseURL: apiUrl,
+});
 
 const getSubscriberTypes = () => {
-  return axios.get(apiUrl);
+  const token = getToken();
+  return axiosInstance.get('', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getSubscriberTypeById = (id) => {
-  return axios.get(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axiosInstance.get(`${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const createSubscriberType = (subscriberType) => {
-  return axios.post(apiUrl, subscriberType);
+  const token = getToken();
+  return axiosInstance.post('', subscriberType, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const updateSubscriberType = (id, subscriberType) => {
-  return axios.put(`${apiUrl}${id}/`, subscriberType);
+  const token = getToken();
+  return axiosInstance.put(`${id}/`, subscriberType, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const deleteSubscriberType = (id) => {
-  return axios.delete(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axiosInstance.delete(`${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export default {
@@ -28,5 +64,5 @@ export default {
   getSubscriberTypeById,
   createSubscriberType,
   updateSubscriberType,
-  deleteSubscriberType
+  deleteSubscriberType,
 };

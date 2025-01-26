@@ -1,26 +1,64 @@
 import axios from 'axios';
 import { API_BASE_URL } from './baseServiceConfig';
 
-const apiUrl = API_BASE_URL+'/api/subscription-languages/'; // Adjust the URL to your API endpoint
+const apiUrl = `${API_BASE_URL}/api/subscription-languages/`;
+
+// Function to get the stored token
+const getToken = () => {
+  if (import.meta.client) {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
+
+// Create an Axios instance with baseURL
+const axiosInstance = axios.create({
+  baseURL: apiUrl,
+});
 
 const getSubscriptionLanguages = () => {
-  return axios.get(apiUrl);
+  const token = getToken();
+  return axiosInstance.get('', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getSubscriptionLanguageById = (id) => {
-  return axios.get(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axiosInstance.get(`${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const createSubscriptionLanguage = (subscriptionLanguage) => {
-  return axios.post(apiUrl, subscriptionLanguage);
+  const token = getToken();
+  return axiosInstance.post('', subscriptionLanguage, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const updateSubscriptionLanguage = (id, subscriptionLanguage) => {
-  return axios.put(`${apiUrl}${id}/`, subscriptionLanguage);
+  const token = getToken();
+  return axiosInstance.put(`${id}/`, subscriptionLanguage, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const deleteSubscriptionLanguage = (id) => {
-  return axios.delete(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axiosInstance.delete(`${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export default {
@@ -28,5 +66,5 @@ export default {
   getSubscriptionLanguageById,
   createSubscriptionLanguage,
   updateSubscriptionLanguage,
-  deleteSubscriptionLanguage
+  deleteSubscriptionLanguage,
 };

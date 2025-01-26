@@ -1,36 +1,78 @@
 import axios from 'axios';
 import { API_BASE_URL } from './baseServiceConfig';
 
-const apiUrl = API_BASE_URL+'/api/subscription-plans/';
-const languageApiUrl = API_BASE_URL+'/api/subscription-languages/';
-const modeApiUrl = API_BASE_URL+'/api/subscription-modes/';
+const apiUrl = `${API_BASE_URL}/api/subscription-plans/`;
+const languageApiUrl = `${API_BASE_URL}/api/subscription-languages/`;
+const modeApiUrl = `${API_BASE_URL}/api/subscription-modes/`;
+
+const getToken = () => {
+  if (import.meta.client) {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
 
 const getPlans = () => {
-  return axios.get(apiUrl);
+  const token = getToken();
+  return axios.get(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getPlanById = (id) => {
-  return axios.get(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axios.get(`${apiUrl}${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const createPlan = (plan) => {
-  return axios.post(apiUrl, plan);
+  const token = getToken();
+  return axios.post(apiUrl, plan, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const updatePlan = (id, plan) => {
-  return axios.put(`${apiUrl}${id}/`, plan);
+  const token = getToken();
+  return axios.put(`${apiUrl}${id}/`, plan, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const deletePlan = (id) => {
-  return axios.delete(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axios.delete(`${apiUrl}${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getLanguages = () => {
-  return axios.get(languageApiUrl);
+  const token = getToken();
+  return axios.get(languageApiUrl, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getModes = () => {
-  return axios.get(modeApiUrl);
+  const token = getToken();
+  return axios.get(modeApiUrl, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export default {

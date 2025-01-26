@@ -1,26 +1,64 @@
 import axios from 'axios';
 import { API_BASE_URL } from './baseServiceConfig';
 
-const apiUrl = API_BASE_URL+'/api/subscriber-categories/'; // Adjust the URL to your API endpoint
+const apiUrl = `${API_BASE_URL}/api/subscriber-categories/`;
+
+// Function to get the stored token
+const getToken = () => {
+  if (import.meta.client) {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
+
+// Create an Axios instance with baseURL
+const axiosInstance = axios.create({
+  baseURL: apiUrl,
+});
 
 const getSubscriberCategories = () => {
-  return axios.get(apiUrl);
+  const token = getToken();
+  return axiosInstance.get('', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getSubscriberCategoryById = (id) => {
-  return axios.get(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axiosInstance.get(`${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const createSubscriberCategory = (subscriberCategory) => {
-  return axios.post(apiUrl, subscriberCategory);
+  const token = getToken();
+  return axiosInstance.post('', subscriberCategory, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const updateSubscriberCategory = (id, subscriberCategory) => {
-  return axios.put(`${apiUrl}${id}/`, subscriberCategory);
+  const token = getToken();
+  return axiosInstance.put(`${id}/`, subscriberCategory, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const deleteSubscriberCategory = (id) => {
-  return axios.delete(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axiosInstance.delete(`${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export default {
@@ -28,5 +66,5 @@ export default {
   getSubscriberCategoryById,
   createSubscriberCategory,
   updateSubscriberCategory,
-  deleteSubscriberCategory
+  deleteSubscriberCategory,
 };

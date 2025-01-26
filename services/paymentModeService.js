@@ -1,26 +1,58 @@
 import axios from 'axios';
 import API_BASE_URL from './baseServiceConfig';
 
-const apiUrl = API_BASE_URL+'/api/payment-modes/';
+const apiUrl = API_BASE_URL + '/api/payment-modes/';
+
+const getToken = () => {
+  if (import.meta.client) {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
 
 const getPaymentModes = () => {
-  return axios.get(apiUrl);
+  const token = getToken();
+  return axios.get(apiUrl, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const getPaymentModeById = (id) => {
-  return axios.get(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axios.get(`${apiUrl}${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const createPaymentMode = (paymentMode) => {
-  return axios.post(apiUrl, paymentMode);
+  const token = getToken();
+  return axios.post(apiUrl, paymentMode, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const updatePaymentMode = (id, paymentMode) => {
-  return axios.put(`${apiUrl}${id}/`, paymentMode);
+  const token = getToken();
+  return axios.put(`${apiUrl}${id}/`, paymentMode, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 const deletePaymentMode = (id) => {
-  return axios.delete(`${apiUrl}${id}/`);
+  const token = getToken();
+  return axios.delete(`${apiUrl}${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export default {
@@ -28,5 +60,5 @@ export default {
   getPaymentModeById,
   createPaymentMode,
   updatePaymentMode,
-  deletePaymentMode
+  deletePaymentMode,
 };

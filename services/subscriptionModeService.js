@@ -44,7 +44,7 @@ const createSubscriptionMode = (subscriptionMode) => {
   const token = getToken();
   return axiosInstance.post(
     "",
-    { subscriptionMode },
+    subscriptionMode,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ const updateSubscriptionMode = (id, subscriptionMode) => {
   const token = getToken();
   return axiosInstance.put(
     `${id}/`,
-    { subscriptionMode },
+    subscriptionMode,
     {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -27,7 +27,6 @@
 
     <!-- Filter Section (similar to the "Search & Filter" box in the other page) -->
     <div class="mb-8 bg-white shadow-lg rounded-lg p-6">
-      <!-- Use a grid layout for consistent columns -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         <!-- Subscriber Type -->

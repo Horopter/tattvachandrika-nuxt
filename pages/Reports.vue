@@ -1,68 +1,156 @@
 <template>
-  <div class="container mx-auto p-6">
-    <h1 class="title">Generate Report</h1>
+  <div class="container mx-auto mt-8 px-4">
+    <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-6">
       <ol class="flex space-x-2 text-gray-700">
         <li>
-          <router-link to="/HomePage" class="text-blue-600 hover:text-blue-800">Home</router-link>
+          <router-link to="/HomePage" class="text-blue-600 hover:text-blue-800 font-semibold">
+            Home
+          </router-link>
         </li>
         <li>
           <span>/</span>
         </li>
-        <li class="text-gray-500" aria-current="page">Generate Report</li>
+        <li class="text-gray-500 font-semibold" aria-current="page">
+          Generate Report
+        </li>
       </ol>
     </nav>
 
-    <!-- Filter Section -->
-    <div class="filter-bar">
-      <div class="form-group">
-        <label for="subscriberType">Subscriber Type</label>
-        <select id="subscriberType" v-model="form.subscriberType">
-          <option value="" disabled>Select</option>
-          <option v-for="type in subscriberTypes" :key="type._id" :value="type.name">
-            {{ type.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="subscriberCategory">Subscriber Category</label>
-        <select id="subscriberCategory" v-model="form.subscriberCategory">
-          <option value="" disabled>Select</option>
-          <option v-for="category in subscriberCategories" :key="category._id" :value="category.name">
-            {{ category.name }}
-          </option>
-        </select>
-      </div>
-    
-      <div class="form-group">
-        <label for="subscriberStatus" class="switch-label">Subscriber Status</label>
-        <div class="switch-container">
-          <span :class="form.subscriberStatus === 'active' ? 'text-green-600 font-bold' : 'text-gray-400'">Active</span>
-          <label class="switch">
-            <input type="checkbox" v-model="isActive" @change="toggleSubscriberStatus" />
-            <span class="slider round"></span>
-          </label>
-          <span :class="form.subscriberStatus === 'inactive' ? 'text-red-600 font-bold' : 'text-gray-400'">Inactive</span>
-        </div>
-      </div>
-
+    <!-- Heading (similar style to your other pages) -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-3xl font-bold text-gray-800">
+        Generate Report
+      </h2>
+      <!-- Optionally, you can place any top-right action button(s) here -->
     </div>
 
-    
+    <!-- Filter Section (similar to the "Search & Filter" box in the other page) -->
+    <div class="mb-8 bg-white shadow-lg rounded-lg p-6">
+      <!-- Use a grid layout for consistent columns -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Subscriber Type -->
+        <div>
+          <label 
+            for="subscriberType" 
+            class="block text-sm font-semibold text-gray-700 mb-1"
+          >
+            Subscriber Type
+          </label>
+          <select
+            id="subscriberType"
+            v-model="form.subscriberType"
+            class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+          >
+            <option value="" disabled>Select</option>
+            <option
+              v-for="type in subscriberTypes"
+              :key="type._id"
+              :value="type.name"
+            >
+              {{ type.name }}
+            </option>
+          </select>
+        </div>
 
-    <div class="button-group">
-      <button class="btn generate-btn" @click="generateReport">Generate</button>
-      <button class="btn download-btn" @click="downloadPdf">Download PDF</button>
+        <!-- Subscriber Category -->
+        <div>
+          <label 
+            for="subscriberCategory" 
+            class="block text-sm font-semibold text-gray-700 mb-1"
+          >
+            Subscriber Category
+          </label>
+          <select
+            id="subscriberCategory"
+            v-model="form.subscriberCategory"
+            class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+          >
+            <option value="" disabled>Select</option>
+            <option
+              v-for="category in subscriberCategories"
+              :key="category._id"
+              :value="category.name"
+            >
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Subscriber Status (Toggle) -->
+        <div>
+          <label 
+            for="subscriberStatus" 
+            class="block text-sm font-semibold text-gray-700 mb-1"
+          >
+            Subscriber Status
+          </label>
+          <div class="flex items-center space-x-3">
+            <!-- "Active" Label -->
+            <span
+              :class="form.subscriberStatus === 'active' 
+                ? 'text-green-600 font-bold' 
+                : 'text-gray-400'"
+            >
+              Active
+            </span>
+            <!-- Toggle Switch -->
+            <label class="switch">
+              <input
+                type="checkbox"
+                v-model="isActive"
+                @change="toggleSubscriberStatus"
+              />
+              <span class="slider round"></span>
+            </label>
+            <!-- "Inactive" Label -->
+            <span
+              :class="form.subscriberStatus === 'inactive' 
+                ? 'text-red-600 font-bold' 
+                : 'text-gray-400'"
+            >
+              Inactive
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Buttons to Generate & Download Report -->
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-4 mb-8">
+      <button
+        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200"
+        @click="generateReport"
+      >
+        Generate
+      </button>
+      <button
+        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200"
+        @click="downloadPdf"
+      >
+        Download PDF
+      </button>
     </div>
 
     <!-- Report Display Section -->
-    <div v-if="reportGenerated" class="report-section">
-      <h2 class="report-title">Report</h2>
-      <div v-if="reportData.length === 0" class="no-data">No data to display.</div>
-      <div class="card-container">
-        <div v-for="(item, index) in reportData" :key="index" class="report-card">
-          <div class="card-content">
+    <div v-if="reportGenerated" class="mb-8 bg-white shadow-lg rounded-lg p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">Report</h2>
+      
+      <!-- Show "No data" if empty -->
+      <div v-if="reportData.length === 0" class="text-gray-500 italic">
+        No data to display.
+      </div>
+
+      <!-- Card Layout for Results -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          v-for="(item, index) in reportData"
+          :key="index"
+          class="bg-white border border-gray-200 rounded-lg shadow p-4 hover:shadow-md transition-transform transform hover:-translate-y-1"
+        >
+          <div class="flex flex-col space-y-1 text-gray-700">
             <p>{{ item.Name }}</p>
             <p>{{ item['Address line 1'] }}</p>
             <p>{{ item['Address line 2'] }}</p>
@@ -103,21 +191,23 @@ export default {
       this.form.subscriberStatus = this.isActive ? 'active' : 'inactive';
     },
     fetchSubscriberTypes() {
-      subscriberTypeService.getSubscriberTypes()
-        .then(response => {
+      subscriberTypeService
+        .getSubscriberTypes()
+        .then((response) => {
           this.subscriberTypes = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching subscriber types:', error);
           alert('Failed to fetch subscriber types. Please try again.');
         });
     },
     fetchSubscriberCategories() {
-      subscriberCategoryService.getSubscriberCategories()
-        .then(response => {
+      subscriberCategoryService
+        .getSubscriberCategories()
+        .then((response) => {
           this.subscriberCategories = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching subscriber categories:', error);
           alert('Failed to fetch subscriber categories. Please try again.');
         });
@@ -129,8 +219,9 @@ export default {
         subscriberCategory: this.form.subscriberCategory,
       };
 
-      reportService.getReport(filters)
-        .then(response => {
+      reportService
+        .getReport(filters)
+        .then((response) => {
           if (response.data.length > 0) {
             this.reportData = response.data;
             this.reportGenerated = true;
@@ -139,7 +230,7 @@ export default {
             this.reportGenerated = false;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('There was an error fetching the report!', error);
           this.reportData = [];
           this.reportGenerated = false;
@@ -153,29 +244,32 @@ export default {
         subscriberCategory: this.form.subscriberCategory,
       };
 
-      reportService.downloadPdfReport(filters)
+      reportService
+        .downloadPdfReport(filters)
         .then((response) => {
-        // Get the current datetime
-        const now = new Date();
-        const formattedDate = now.toISOString().slice(0, 10); // YYYY-MM-DD
-        const formattedTime = now.toISOString().slice(11, 19).replace(/:/g, '-'); // HH-MM-SS
+          // Get the current datetime
+          const now = new Date();
+          const formattedDate = now.toISOString().slice(0, 10); // YYYY-MM-DD
+          const formattedTime = now.toISOString().slice(11, 19).replace(/:/g, '-'); // HH-MM-SS
 
-        // Set the filename with IST timezone
-        const filename = `subscriber_report_${formattedDate}_${formattedTime}_IST.pdf`;
+          // Set the filename with IST timezone
+          const filename = `subscriber_report_${formattedDate}_${formattedTime}_IST.pdf`;
 
-        // Handle the PDF download
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
-      .catch((error) => {
-        console.error('Error downloading the PDF:', error);
-        alert('Failed to download the PDF. Please try again.');
-      });
+          // Handle the PDF download
+          const url = window.URL.createObjectURL(
+            new Blob([response.data], { type: 'application/pdf' })
+          );
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch((error) => {
+          console.error('Error downloading the PDF:', error);
+          alert('Failed to download the PDF. Please try again.');
+        });
     },
   },
   created() {
@@ -186,13 +280,7 @@ export default {
 </script>
 
 <style scoped>
-/* Updated Styles for Switch */
-.switch-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* Keep switch-related styling if you want the same toggle UI. */
 .switch {
   position: relative;
   display: inline-block;
@@ -208,13 +296,13 @@ export default {
 
 .slider {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
+  cursor: pointer;
   border-radius: 24px;
 }
 
@@ -223,9 +311,9 @@ export default {
   content: "";
   height: 18px;
   width: 18px;
-  left: 4px;
+  left: 3px;
   bottom: 3px;
-  background-color: white;
+  background-color: #fff;
   transition: 0.4s;
   border-radius: 50%;
 }
@@ -236,115 +324,5 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
-}
-
-.container {
-  background-color: #ffedcc;
-  border-radius: 8px;
-  padding: 2rem;
-  margin-top: 1rem;
-}
-
-.filter-bar {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-label {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s;
-}
-
-select:focus {
-  border-color: #3b82f6;
-  outline: none;
-}
-
-.button-group {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.generate-btn {
-  padding: 0.5rem 1rem;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.generate-btn:hover {
-  background-color: #2563eb;
-}
-
-.download-btn {
-  padding: 0.5rem 1rem;
-  background-color: #10b981;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.download-btn:hover {
-  background-color: #059669;
-}
-
-.report-section {
-  margin-top: 2rem;
-}
-
-.report-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.no-data {
-  color: #6b7280;
-  font-style: italic;
-}
-
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.report-card {
-  flex: 1 1 calc(50% - 1rem);
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.report-card:hover {
-  transform: translateY(-3px);
 }
 </style>

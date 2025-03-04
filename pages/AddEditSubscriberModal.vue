@@ -32,7 +32,7 @@
         </button>
       </div>
 
-      <!-- Content -->
+
       <div class="p-6 flex-1 overflow-y-auto">
         <form @submit.prevent="handleSubmit">
           <!-- Name -->
@@ -46,6 +46,7 @@
               required
             />
           </div>
+          
           <!-- Registration Number -->
           <div class="mb-4">
             <label for="registration_number" class="block text-sm font-medium text-gray-700">Registration Number</label>
@@ -57,6 +58,7 @@
               required
             />
           </div>
+
           <!-- Address -->
           <div class="mb-4">
             <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
@@ -65,9 +67,10 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="address"
               v-model="localSubscriber.address"
+              required
             />
           </div>
-          <!-- City/Town -->
+
           <div class="mb-4">
             <label for="city_town" class="block text-sm font-medium text-gray-700">City/Town</label>
             <input
@@ -76,9 +79,9 @@
               id="city_town"
               v-model="localSubscriber.city_town"
             />
-          </div>
-          <!-- State -->
-          <div class="mb-4">
+           </div>
+           
+           <div class="mb-4">
             <label for="state" class="block text-sm font-medium text-gray-700">State</label>
             <input
               type="text"
@@ -87,7 +90,7 @@
               v-model="localSubscriber.state"
             />
           </div>
-          <!-- Pincode -->
+
           <div class="mb-4">
             <label for="pincode" class="block text-sm font-medium text-gray-700">Pincode</label>
             <input
@@ -97,7 +100,7 @@
               v-model="localSubscriber.pincode"
             />
           </div>
-          <!-- Phone -->
+
           <div class="mb-4">
             <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
             <input
@@ -105,8 +108,13 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="phone"
               v-model="localSubscriber.phone"
+              pattern="[0-9]{10}" 
+              maxlength="10"
+              required
+              title="Phone number must be exactly 10 digits."
             />
           </div>
+
           <!-- Email -->
           <div class="mb-4">
             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
@@ -115,9 +123,13 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="email"
               v-model="localSubscriber.email"
+              pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
               required
+              title="Enter a valid email address (e.g., user@example.com)."
             />
+            <p v-if="emailError" class="text-red-500 text-sm">{{ emailError }}</p>
           </div>
+
           <!-- Category -->
           <div class="mb-4">
             <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
@@ -125,12 +137,14 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="category"
               v-model="localSubscriber.category"
+              required
             >
               <option v-for="category in categories" :value="category._id" :key="category._id">
                 {{ category.name }}
               </option>
             </select>
           </div>
+
           <!-- Type -->
           <div class="mb-4">
             <label for="stype" class="block text-sm font-medium text-gray-700">Type</label>
@@ -138,12 +152,14 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="stype"
               v-model="localSubscriber.stype"
+              required
             >
               <option v-for="t in types" :value="t._id" :key="t._id">
                 {{ t.name }}
               </option>
             </select>
           </div>
+
           <!-- Notes -->
           <div class="mb-4">
             <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
@@ -153,30 +169,27 @@
               v-model="localSubscriber.notes"
             ></textarea>
           </div>
-          <!-- Note: Removed action buttons from here -->
+
+          <div class="flex justify-end space-x-2">
+            <button
+              type="submit"
+              class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {{ modalButton }}
+            </button>
+            <button
+              type="button"
+              class="px-6 py-2 bg-gray-300 text-gray-700 font-semibold rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              @click="close"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
-
-      <!-- Footer -->
-      <div class="flex justify-end space-x-2 p-4 border-t flex-shrink-0">
-        <button
-          type="submit"
-          class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          @click="handleSubmit"
-        >
-          {{ modalButton }}
-        </button>
-        <button
-          type="button"
-          class="px-6 py-2 bg-gray-300 text-gray-700 font-semibold rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-          @click="close"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
+          </div>
+        </div>
+      </template>
 
 <script>
 export default {

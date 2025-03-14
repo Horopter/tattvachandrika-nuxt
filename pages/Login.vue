@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-amber-50 min-h-screen">
+  <div class="bg-amber-50 min-h-screen relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
+
     <!-- Header -->
     <header class="bg-orange-50">
       <div class="container mx-auto flex justify-between items-center p-4">
@@ -14,11 +17,7 @@
               />
             </defs>
             <text>
-              <textPath
-                xlink:href="#curve"
-                startOffset="25%"
-                text-anchor="middle"
-              >
+              <textPath xlink:href="#curve" startOffset="25%" text-anchor="middle">
                 Sri Moola Gopala Krishno Vijayathe
               </textPath>
             </text>
@@ -90,9 +89,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.first_name" class="error-message">{{
-              errors.first_name
-            }}</span>
+            <span v-if="errors.first_name" class="error-message">
+              {{ errors.first_name }}
+            </span>
 
             <input
               v-model="signupData.last_name"
@@ -101,9 +100,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.last_name" class="error-message">{{
-              errors.last_name
-            }}</span>
+            <span v-if="errors.last_name" class="error-message">
+              {{ errors.last_name }}
+            </span>
 
             <input
               v-model="signupData.username"
@@ -112,9 +111,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.username" class="error-message">{{
-              errors.username
-            }}</span>
+            <span v-if="errors.username" class="error-message">
+              {{ errors.username }}
+            </span>
 
             <input
               v-model="signupData.email"
@@ -123,9 +122,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.email" class="error-message">{{
-              errors.email
-            }}</span>
+            <span v-if="errors.email" class="error-message">
+              {{ errors.email }}
+            </span>
 
             <input
               v-model="signupData.aadhaar"
@@ -134,9 +133,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.aadhaar" class="error-message">{{
-              errors.aadhaar
-            }}</span>
+            <span v-if="errors.aadhaar" class="error-message">
+              {{ errors.aadhaar }}
+            </span>
 
             <input
               v-model="signupData.mobile"
@@ -145,9 +144,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.mobile" class="error-message">{{
-              errors.mobile
-            }}</span>
+            <span v-if="errors.mobile" class="error-message">
+              {{ errors.mobile }}
+            </span>
 
             <input
               v-model="signupData.password"
@@ -156,9 +155,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.password" class="error-message">{{
-              errors.password
-            }}</span>
+            <span v-if="errors.password" class="error-message">
+              {{ errors.password }}
+            </span>
 
             <input
               v-model="signupData.re_password"
@@ -167,9 +166,9 @@
               required
               class="input-field"
             />
-            <span v-if="errors.re_password" class="error-message">{{
-              errors.re_password
-            }}</span>
+            <span v-if="errors.re_password" class="error-message">
+              {{ errors.re_password }}
+            </span>
 
             <button type="submit" class="submit-button">Sign Up</button>
           </form>
@@ -186,14 +185,18 @@
 </template>
 
 <script>
-import axios from "axios"; // Ensure axios is installed and imported
-import ToastMessage from "./ToastMessage.vue"; // A simple toast message component
+import axios from "axios";
+import ToastMessage from "./ToastMessage.vue";
 import { API_BASE_URL } from "~/services/baseServiceConfig";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
     ToastMessage,
+    Loader
   },
+  mixins: [loadingMixin],
   data() {
     return {
       currentTab: "login",
@@ -211,7 +214,7 @@ export default {
         password: "",
         re_password: "",
       },
-      errors: {}, // Object to hold validation errors
+      errors: {},
       toastVisible: false,
       toastMessage: "",
     };
@@ -219,31 +222,23 @@ export default {
   methods: {
     toggleTab(tab) {
       this.currentTab = tab;
-      this.errors = {}; // Reset errors when switching tabs
+      this.errors = {};
     },
     validateSignup() {
       this.errors = {};
       let isValid = true;
-
-      // Validate first name
       if (!this.signupData.first_name) {
         this.errors.first_name = "First Name is required.";
         isValid = false;
       }
-
-      // Validate last name
       if (!this.signupData.last_name) {
         this.errors.last_name = "Last Name is required.";
         isValid = false;
       }
-
-      // Validate username
       if (!this.signupData.username) {
         this.errors.username = "Username is required.";
         isValid = false;
       }
-
-      // Validate email
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.signupData.email) {
         this.errors.email = "Email is required.";
@@ -252,15 +247,11 @@ export default {
         this.errors.email = "Invalid email format.";
         isValid = false;
       }
-
-      // Validate Aadhaar number
       if (!this.signupData.aadhaar) {
         this.errors.aadhaar = "Aadhaar Number is required.";
         isValid = false;
       }
-
-      // Validate mobile number
-      const mobilePattern = /^[0-9]{10}$/; // Simple validation for 10-digit number
+      const mobilePattern = /^[0-9]{10}$/;
       if (!this.signupData.mobile) {
         this.errors.mobile = "Mobile Number is required.";
         isValid = false;
@@ -268,69 +259,61 @@ export default {
         this.errors.mobile = "Invalid mobile number format.";
         isValid = false;
       }
-
-      // Validate password
       if (!this.signupData.password) {
         this.errors.password = "Password is required.";
         isValid = false;
       }
-
-      // Validate re-entered password
       if (this.signupData.password !== this.signupData.re_password) {
         this.errors.re_password = "Passwords do not match.";
         isValid = false;
       }
-
       return isValid;
     },
     async login() {
-      try {
-        const response = await axios.post(
-          API_BASE_URL+"/api/adminusers/login/",
-          this.loginData
-        );
-        localStorage.setItem('token', response.data.token);
-        console.log('Token sent by remote: '+ response);
-        this.$router.push({ name: "HomePage" }); // Redirect to homepage
-      } catch (error) {
-        console.error("Login failed:", error.response.data);
-        alert("Login failed: " + error.response.data.error);
-      }
+      await this.runWithLoader(() =>
+        axios.post(API_BASE_URL + "/api/adminusers/login/", this.loginData)
+          .then((response) => {
+            localStorage.setItem("token", response.data.token);
+            this.$router.push({ name: "HomePage" });
+          })
+          .catch((error) => {
+            console.error("Login failed:", error.response.data);
+            alert("Login failed: " + error.response.data.error);
+          })
+      );
     },
     async signup() {
       if (this.validateSignup()) {
-        // Only proceed if validation is successful
-        try {
-          const response = await axios.post(
-            API_BASE_URL+"/api/adminusers/signup/",
-            {
-              username: this.signupData.username,
-              email: this.signupData.email,
-              first_name: this.signupData.first_name,
-              last_name: this.signupData.last_name,
-              aadhaar: this.signupData.aadhaar,
-              mobile: this.signupData.mobile,
-              password: this.signupData.password,
-            }
-          );
-          console.log(response.data);
-          this.toastMessage = "Sign up successful! Please log in.";
-          this.toastVisible = true;
-          this.toggleTab("login"); // Switch to login tab after successful signup
-        } catch (error) {
-          console.error("Sign up failed:", error);
-          // Check if the error has a response object
-          if (error.response && error.response.data) {
-            alert(
-              "Sign up failed: " +
+        await this.runWithLoader(() =>
+          axios.post(API_BASE_URL + "/api/adminusers/signup/", {
+            username: this.signupData.username,
+            email: this.signupData.email,
+            first_name: this.signupData.first_name,
+            last_name: this.signupData.last_name,
+            aadhaar: this.signupData.aadhaar,
+            mobile: this.signupData.mobile,
+            password: this.signupData.password,
+          })
+          .then((response) => {
+            console.log(response.data);
+            this.toastMessage = "Sign up successful! Please log in.";
+            this.toastVisible = true;
+            this.toggleTab("login");
+          })
+          .catch((error) => {
+            console.error("Sign up failed:", error);
+            if (error.response && error.response.data) {
+              alert(
+                "Sign up failed: " +
                 (error.response.data.error ||
                   error.response.data.detail ||
                   "Unknown error")
-            );
-          } else {
-            alert("Sign up failed: " + (error.message || "Network error"));
-          }
-        }
+              );
+            } else {
+              alert("Sign up failed: " + (error.message || "Network error"));
+            }
+          })
+        );
       }
     },
   },
@@ -339,19 +322,19 @@ export default {
 
 <style scoped>
 .bg-amber-50 {
-  background-color: #fbbf24; /* Amber background */
+  background-color: #fbbf24;
 }
 .bg-orange-50 {
-  background-color: #feebc8; /* Light orange background */
+  background-color: #feebc8;
 }
 .bg-orange-100 {
-  background-color: #ffedd5; /* Even lighter orange */
+  background-color: #ffedd5;
 }
 .text-orange-700 {
-  color: #b45309; /* Darker orange */
+  color: #b45309;
 }
 .text-orange-800 {
-  color: #9a3412; /* Darker orange for headers */
+  color: #9a3412;
 }
 .container {
   max-width: 600px;
@@ -366,13 +349,13 @@ export default {
   padding: 10px;
   cursor: pointer;
   background-color: transparent;
-  border: 1px solid #feab00; /* Light orange border */
-  color: #b45309; /* Dark orange text */
+  border: 1px solid #feab00;
+  color: #b45309;
   transition: background-color 0.3s, color 0.3s;
 }
 .tab-button.active {
-  background-color: #feab00; /* Light orange background when active */
-  color: white; /* White text */
+  background-color: #feab00;
+  color: white;
 }
 .input-field {
   width: 100%;
@@ -384,7 +367,7 @@ export default {
 .submit-button {
   width: 100%;
   padding: 10px;
-  background-color: #feab00; /* Light orange */
+  background-color: #feab00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -392,7 +375,7 @@ export default {
   transition: background-color 0.3s;
 }
 .submit-button:hover {
-  background-color: #e9b300; /* Darker light orange on hover */
+  background-color: #e9b300;
 }
 .error-message {
   color: red;

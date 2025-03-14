@@ -1,40 +1,33 @@
 <template>
-  <div class="container mx-auto mt-8 px-4">
+  <div class="container mx-auto mt-8 px-4 relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
+
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-6">
       <ol class="flex space-x-2 text-gray-700">
         <li>
-          <router-link to="/HomePage" class="text-blue-600 hover:text-blue-800 font-semibold">
+          <router-link to="/HomePage" class="text-blue-600 hover:text-blue-800 hover:underline">
             Home
           </router-link>
         </li>
-        <li>
-          <span>/</span>
-        </li>
-        <li class="text-gray-500 font-semibold" aria-current="page">
-          Generate Report
-        </li>
+        <li><span>/</span></li>
+        <li class="text-gray-500" aria-current="page">Generate Report</li>
       </ol>
     </nav>
 
-    <!-- Heading (similar style to your other pages) -->
+    <!-- Heading -->
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-3xl font-bold text-gray-800">
-        Generate Report
-      </h2>
-      <!-- Optionally, you can place any top-right action button(s) here -->
+      <h2 class="text-3xl font-bold text-gray-800">Generate Report</h2>
+      <!-- Optionally, top-right action button(s) -->
     </div>
 
-    <!-- Filter Section (similar to the "Search & Filter" box in the other page) -->
+    <!-- Filter Section -->
     <div class="mb-8 bg-white shadow-lg rounded-lg p-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
         <!-- Subscriber Type -->
         <div>
-          <label 
-            for="subscriberType" 
-            class="block text-sm font-semibold text-gray-700 mb-1"
-          >
+          <label for="subscriberType" class="block text-sm font-semibold text-gray-700 mb-1">
             Subscriber Type
           </label>
           <select
@@ -55,10 +48,7 @@
 
         <!-- Subscriber Category -->
         <div>
-          <label 
-            for="subscriberCategory" 
-            class="block text-sm font-semibold text-gray-700 mb-1"
-          >
+          <label for="subscriberCategory" class="block text-sm font-semibold text-gray-700 mb-1">
             Subscriber Category
           </label>
           <select
@@ -79,43 +69,25 @@
 
         <!-- Subscriber Status (Toggle) -->
         <div>
-          <label 
-            for="subscriberStatus" 
-            class="block text-sm font-semibold text-gray-700 mb-1"
-          >
+          <label for="subscriberStatus" class="block text-sm font-semibold text-gray-700 mb-1">
             Subscriber Status
           </label>
           <div class="flex items-center space-x-3">
-            <!-- "Active" Label -->
-            <span
-              :class="form.subscriberStatus === 'active' 
-                ? 'text-green-600 font-bold' 
-                : 'text-gray-400'"
-            >
+            <span :class="form.subscriberStatus === 'active' ? 'text-green-600 font-bold' : 'text-gray-400'">
               Active
             </span>
             <!-- Toggle Switch -->
             <label class="switch">
-              <input
-                type="checkbox"
-                v-model="isActive"
-                @change="toggleSubscriberStatus"
-              />
+              <input type="checkbox" v-model="isActive" @change="toggleSubscriberStatus" />
               <span class="slider round"></span>
             </label>
-            <!-- "Inactive" Label -->
-            <span
-              :class="form.subscriberStatus === 'inactive' 
-                ? 'text-red-600 font-bold' 
-                : 'text-gray-400'"
-            >
+            <span :class="form.subscriberStatus === 'inactive' ? 'text-red-600 font-bold' : 'text-gray-400'">
               Inactive
             </span>
           </div>
         </div>
       </div>
     </div>
-
 
     <!-- Buttons to Generate & Download Report -->
     <div class="flex flex-col md:flex-row items-start md:items-center gap-4 mb-8">
@@ -136,13 +108,9 @@
     <!-- Report Display Section -->
     <div v-if="reportGenerated" class="mb-8 bg-white shadow-lg rounded-lg p-6">
       <h2 class="text-xl font-bold text-gray-800 mb-4">Report</h2>
-      
-      <!-- Show "No data" if empty -->
       <div v-if="reportData.length === 0" class="text-gray-500 italic">
         No data to display.
       </div>
-
-      <!-- Card Layout for Results -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
           v-for="(item, index) in reportData"
@@ -169,29 +137,43 @@
 import reportService from '../services/reportService';
 import subscriberTypeService from '../services/subscriberTypeService';
 import subscriberCategoryService from '../services/subscriberCategoryService';
+import Loader from '~/components/Loader.vue';
+import loadingMixin from '~/mixins/loadingMixin.js';
 
 export default {
+  mixins: [loadingMixin],
+  components: {
+    Loader
+  },
   data() {
     return {
       form: {
-        subscriberStatus: 'active', // Default to active
+        subscriberStatus: 'active',
         subscriberType: '',
         subscriberCategory: '',
       },
-      isActive: true, // Switch state for active/inactive subscribers
+      isActive: true,
       reportGenerated: false,
       reportData: [],
       subscriberTypes: [],
       subscriberCategories: [],
     };
   },
+  created() {
+    // Wrap fetching subscriber types and categories in the loader
+    this.runWithLoader(() =>
+      Promise.all([
+        this.fetchSubscriberTypes(),
+        this.fetchSubscriberCategories()
+      ])
+    );
+  },
   methods: {
     toggleSubscriberStatus() {
       this.form.subscriberStatus = this.isActive ? 'active' : 'inactive';
     },
     fetchSubscriberTypes() {
-      subscriberTypeService
-        .getSubscriberTypes()
+      return subscriberTypeService.getSubscriberTypes()
         .then((response) => {
           this.subscriberTypes = response.data;
         })
@@ -201,8 +183,7 @@ export default {
         });
     },
     fetchSubscriberCategories() {
-      subscriberCategoryService
-        .getSubscriberCategories()
+      return subscriberCategoryService.getSubscriberCategories()
         .then((response) => {
           this.subscriberCategories = response.data;
         })
@@ -217,24 +198,24 @@ export default {
         subscriberType: this.form.subscriberType,
         subscriberCategory: this.form.subscriberCategory,
       };
-
-      reportService
-        .getReport(filters)
-        .then((response) => {
-          if (response.data.length > 0) {
-            this.reportData = response.data;
-            this.reportGenerated = true;
-          } else {
+      return this.runWithLoader(() => {
+        return reportService.getReport(filters)
+          .then((response) => {
+            if (response.data.length > 0) {
+              this.reportData = response.data;
+              this.reportGenerated = true;
+            } else {
+              this.reportData = [];
+              this.reportGenerated = false;
+            }
+          })
+          .catch((error) => {
+            console.error('There was an error fetching the report!', error);
             this.reportData = [];
             this.reportGenerated = false;
-          }
-        })
-        .catch((error) => {
-          console.error('There was an error fetching the report!', error);
-          this.reportData = [];
-          this.reportGenerated = false;
-          alert('Failed to fetch the report. Please try again.');
-        });
+            alert('Failed to fetch the report. Please try again.');
+          });
+      });
     },
     downloadPdf() {
       const filters = {
@@ -242,86 +223,31 @@ export default {
         subscriberType: this.form.subscriberType,
         subscriberCategory: this.form.subscriberCategory,
       };
-
-      reportService
-        .downloadPdfReport(filters)
-        .then((response) => {
-          // Get the current datetime
-          const now = new Date();
-          const formattedDate = now.toISOString().slice(0, 10); // YYYY-MM-DD
-          const formattedTime = now.toISOString().slice(11, 19).replace(/:/g, '-'); // HH-MM-SS
-
-          // Set the filename with IST timezone
-          const filename = `subscriber_report_${formattedDate}_${formattedTime}_IST.pdf`;
-
-          // Handle the PDF download
-          const url = window.URL.createObjectURL(
-            new Blob([response.data], { type: 'application/pdf' })
-          );
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', filename);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        })
-        .catch((error) => {
-          console.error('Error downloading the PDF:', error);
-          alert('Failed to download the PDF. Please try again.');
-        });
+      return this.runWithLoader(() => {
+        return reportService.downloadPdfReport(filters)
+          .then((response) => {
+            const now = new Date();
+            const formattedDate = now.toISOString().slice(0, 10);
+            const formattedTime = now.toISOString().slice(11, 19).replace(/:/g, '-');
+            const filename = `subscriber_report_${formattedDate}_${formattedTime}_IST.pdf`;
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          })
+          .catch((error) => {
+            console.error('Error downloading the PDF:', error);
+            alert('Failed to download the PDF. Please try again.');
+          });
+      });
     },
-  },
-  created() {
-    this.fetchSubscriberTypes();
-    this.fetchSubscriberCategories();
   },
 };
 </script>
 
 <style scoped>
-/* Keep switch-related styling if you want the same toggle UI. */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  cursor: pointer;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: #fff;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #4caf50;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
+/* You can remove the manual loader styles if they're defined in Loader.vue */
 </style>

@@ -82,6 +82,16 @@ const getTypes = () => {
   });
 };
 
+const searchMagazineSubscribers = (params) => {
+  const token = getToken();
+  return axios.get(API_BASE_URL + '/api/subscribers/search/', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: params,
+  });
+};
+
 export default {
   getMagazineSubscribers,
   getMagazineSubscriberById,
@@ -90,5 +100,6 @@ export default {
   softDeleteMagazineSubscriber,
   activateMagazineSubscriber,
   getCategories,
-  getTypes
+  getTypes,
+  searchMagazineSubscribers
 };

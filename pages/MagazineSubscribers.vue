@@ -1,5 +1,8 @@
 <template>
-  <div class="container mx-auto mt-8 px-4">
+  <div class="container mx-auto mt-8 px-4 relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
+
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-6">
       <ol class="flex space-x-2 text-gray-700">
@@ -17,20 +20,20 @@
       </ol>
     </nav>
 
-    <!-- Heading & Add Subscriber Button in one line -->
+    <!-- Heading & Add Subscriber Button -->
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-3xl font-bold text-gray-800">
         Magazine Subscribers
       </h2>
       <button
         class="bg-gradient-to-r text-lg from-blue-500 to-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
-        @click="openEditSubscriberModal"
+        @click="openAddSubscriberModal"
       >
         Add Subscriber
       </button>
     </div>
 
-    <!-- Enhanced Search & Filter Section with Search Button -->
+    <!-- Search & Filter Section -->
     <div class="mb-8 bg-white shadow-lg rounded-lg p-6">
       <div class="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
         <!-- Filter Dropdown -->
@@ -65,7 +68,7 @@
           </div>
         </div>
 
-        <!-- Search Button -->
+        <!-- Search & Reset Buttons -->
         <div>
           <button
             class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200"
@@ -74,8 +77,6 @@
             Search
           </button>
         </div>
-
-        <!-- Reset Button -->
         <div>
           <button
             class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200"
@@ -111,7 +112,7 @@
 
     <!-- Active Subscribers Section -->
     <div v-show="activeTab === 'active'">
-      <!-- Sub-Tabs (Pill Design) for 'Current' vs 'Waiting for Renewal' -->
+      <!-- Sub-Tabs for 'Current' vs 'Waiting for Renewal' -->
       <div class="flex gap-2 mb-4">
         <button
           class="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 transition-colors duration-200"
@@ -340,9 +341,8 @@
       :types="types"
       @close="closeAddEditSubscriberModal"
       @save="saveSubscriber"
-    >
-    </add-edit-subscriber-modal>
-
+    />
+    
     <!-- Confirmation Modal -->
     <confirmation-modal
       v-if="showConfirmationModal"
@@ -351,24 +351,27 @@
       message="Are you sure you want to delete this subscriber?"
       @close="hideDeleteModal"
       @confirm="deleteSubscriber"
-    >
-    </confirmation-modal>
-
+    />
+    
     <!-- Toast Notification -->
     <toast-notification ref="toast" />
   </div>
 </template>
 
 <script>
-import AddEditSubscriberModal from './AddEditSubscriberModal.vue';
-import ConfirmationModal from './ConfirmationModal.vue';
-import magazineSubscriberService from '../services/magazineSubscriberService';
+import AddEditSubscriberModal from "./AddEditSubscriberModal.vue";
+import ConfirmationModal from "./ConfirmationModal.vue";
+import magazineSubscriberService from "../services/magazineSubscriberService";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
     AddEditSubscriberModal,
-    ConfirmationModal
+    ConfirmationModal,
+    Loader
   },
+  mixins: [loadingMixin],
   data() {
     return {
       currentSubscribers: [],
@@ -380,12 +383,10 @@ export default {
       selectedSubscriber: null,
       showConfirmationModal: false,
       subscriberToDelete: null,
-      activeTab: 'active',
-      activeSubTab: 'current',
-
-      // Search fields (if you’re using them)
-      searchQuery: '',
-      searchFilter: 'name',
+      activeTab: "active",
+      activeSubTab: "current",
+      searchQuery: "",
+      searchFilter: "name"
     };
   },
   created() {
@@ -395,56 +396,55 @@ export default {
   },
   methods: {
     loadSubscribers() {
-      magazineSubscriberService
-        .getMagazineSubscribers()
-        .then((response) => {
-          this.currentSubscribers = response.data.filter(
-            (subscriber) => !subscriber.isDeleted && subscriber.hasActiveSubscriptions
-          );
-          this.waitingForRenewalSubscribers = response.data.filter(
-            (subscriber) => !subscriber.isDeleted && !subscriber.hasActiveSubscriptions
-          );
-          this.inactiveSubscribers = response.data.filter(
-            (subscriber) => subscriber.isDeleted
-          );
-        })
-        .catch((error) => {
-          console.error('There was an error retrieving the subscribers!', error);
-        });
+      return this.runWithLoader(() => {
+        return magazineSubscriberService.getMagazineSubscribers()
+          .then((response) => {
+            this.currentSubscribers = response.data.filter(
+              (subscriber) => !subscriber.isDeleted && subscriber.hasActiveSubscriptions
+            );
+            this.waitingForRenewalSubscribers = response.data.filter(
+              (subscriber) => !subscriber.isDeleted && !subscriber.hasActiveSubscriptions
+            );
+            this.inactiveSubscribers = response.data.filter(
+              (subscriber) => subscriber.isDeleted
+            );
+          })
+          .catch((error) => {
+            console.error("There was an error retrieving the subscribers!", error);
+          });
+      });
     },
     loadCategories() {
-      magazineSubscriberService
-        .getCategories()
+      magazineSubscriberService.getCategories()
         .then((response) => {
           this.categories = response.data;
         })
         .catch((error) => {
-          console.error('There was an error retrieving the categories!', error);
+          console.error("There was an error retrieving the categories!", error);
         });
     },
     loadTypes() {
-      magazineSubscriberService
-        .getTypes()
+      magazineSubscriberService.getTypes()
         .then((response) => {
           this.types = response.data;
         })
         .catch((error) => {
-          console.error('There was an error retrieving the types!', error);
+          console.error("There was an error retrieving the types!", error);
         });
     },
     openAddSubscriberModal() {
       this.selectedSubscriber = {
-        registration_number: '',
-        name: '',
-        address: '',
-        city_town: '',
-        state: '',
-        pincode: '',
-        phone: '',
-        email: '',
-        category: '',
-        stype: '',
-        notes: ''
+        registration_number: "",
+        name: "",
+        address: "",
+        city_town: "",
+        state: "",
+        pincode: "",
+        phone: "",
+        email: "",
+        category: "",
+        stype: "",
+        notes: ""
       };
       this.showAddEditSubscriberModal = true;
     },
@@ -457,48 +457,40 @@ export default {
     },
     saveSubscriber(subscriber) {
       if (subscriber._id) {
-        magazineSubscriberService
-          .updateMagazineSubscriber(subscriber._id, subscriber)
+        magazineSubscriberService.updateMagazineSubscriber(subscriber._id, subscriber)
           .then(() => {
             this.loadSubscribers();
             this.showAddEditSubscriberModal = false;
           })
           .catch((error) => {
-            alert('There was an error updating the subscriber!');
-            console.error('There was an error updating the subscriber!', error);
+            alert("There was an error updating the subscriber!");
+            console.error("There was an error updating the subscriber!", error);
           });
       } else {
-        magazineSubscriberService
-          .createMagazineSubscriber(subscriber)
+        magazineSubscriberService.createMagazineSubscriber(subscriber)
           .then(() => {
             this.loadSubscribers();
             this.showAddEditSubscriberModal = false;
-            alert('User added successfully!');
+            alert("User added successfully!");
           })
           .catch((error) => {
             if (error.response && error.response.data) {
               const errorData = error.response.data;
-              console.error('API Error Response:', errorData);
-
-              // Collect all error messages
+              console.error("API Error Response:", errorData);
               let errorMessages = [];
-
               Object.keys(errorData).forEach((field) => {
                 if (Array.isArray(errorData[field])) {
-                  errorMessages.push(
-                    `${field.replace('_', ' ')}: ${errorData[field][0]}`
-                  );
+                  errorMessages.push(`${field.replace("_", " ")}: ${errorData[field][0]}`);
                 }
               });
-
               if (errorMessages.length > 0) {
-                alert(errorMessages.join('\n'));
+                alert(errorMessages.join("\n"));
               } else {
-                alert('There was an error adding the subscriber!');
+                alert("There was an error adding the subscriber!");
               }
             } else {
-              alert('Something went wrong! Unable to add the subscriber.');
-              console.error('Unknown API Error:', error);
+              alert("Something went wrong! Unable to add the subscriber.");
+              console.error("Unknown API Error:", error);
             }
           });
       }
@@ -512,33 +504,53 @@ export default {
     },
     deleteSubscriber() {
       if (this.subscriberToDelete) {
-        magazineSubscriberService
-          .softDeleteMagazineSubscriber(this.subscriberToDelete)
+        magazineSubscriberService.softDeleteMagazineSubscriber(this.subscriberToDelete)
           .then(() => {
             this.loadSubscribers();
             this.hideDeleteModal();
           })
           .catch((error) => {
-            console.error('There was an error deleting the subscriber!', error);
+            console.error("There was an error deleting the subscriber!", error);
           });
       }
     },
     activateSubscriber(subscriberId) {
-      magazineSubscriberService
-        .activateMagazineSubscriber(subscriberId)
+      magazineSubscriberService.activateMagazineSubscriber(subscriberId)
         .then(() => {
           this.loadSubscribers();
         })
         .catch((error) => {
-          console.error('There was an error activating the subscriber!', error);
+          console.error("There was an error activating the subscriber!", error);
         });
     },
     performSearch() {
-      // Your search logic
+      this.runWithLoader(() => {
+        const params = {
+          filter: this.searchFilter,
+          query: this.searchQuery
+        };
+        return magazineSubscriberService.searchMagazineSubscribers(params)
+          .then((response) => {
+            this.currentSubscribers = response.data.filter(
+              (subscriber) => !subscriber.isDeleted && subscriber.hasActiveSubscriptions
+            );
+            this.waitingForRenewalSubscribers = response.data.filter(
+              (subscriber) => !subscriber.isDeleted && !subscriber.hasActiveSubscriptions
+            );
+            this.inactiveSubscribers = response.data.filter(
+              (subscriber) => subscriber.isDeleted
+            );
+          })
+          .catch((error) => {
+            console.error("There was an error performing search!", error);
+          });
+      });
     },
     resetSearch() {
-      this.searchQuery = '';
-      this.searchFilter = 'name';
+      this.searchQuery = "";
+      this.searchFilter = "name";
+      this.activeTab = "active";
+      this.activeSubTab = "current";
       this.loadSubscribers();
     },
     viewSubscriber(subscriberId) {
@@ -549,7 +561,5 @@ export default {
 </script>
 
 <style scoped>
-.table {
-  margin-top: 20px;
-}
+/* Additional scoped styles if needed */
 </style>

@@ -1,12 +1,17 @@
 <template>
-  <div class="container mx-auto mt-10 px-6">
+  <div class="container mx-auto mt-10 px-6 relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
+
     <h2 class="text-3xl font-semibold text-gray-900 mb-6">Subscription Languages</h2>
 
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-8">
       <ol class="flex space-x-2 text-gray-600">
         <li>
-          <router-link to="/HomePage" class="text-indigo-600 hover:text-indigo-800 font-medium">Home</router-link>
+          <router-link to="/HomePage" class="text-indigo-600 hover:text-indigo-800 font-medium">
+            Home
+          </router-link>
         </li>
         <li>
           <span>/</span>
@@ -28,11 +33,26 @@
           <!-- Add New Language Row -->
           <tr v-if="addingNew">
             <td class="px-6 py-4">
-              <input type="text" v-model="newSubscriptionLanguage.name" class="border border-gray-300 px-4 py-2 rounded-full w-full focus:ring focus:ring-indigo-300 focus:border-indigo-500" placeholder="Enter language name" />
+              <input
+                type="text"
+                v-model="newSubscriptionLanguage.name"
+                class="border border-gray-300 px-4 py-2 rounded-full w-full focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                placeholder="Enter language name"
+              />
             </td>
             <td class="px-6 py-4">
-              <button class="bg-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 mr-2" @click="saveNewSubscriptionLanguage">Save</button>
-              <button class="bg-gray-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300" @click="cancelNewSubscriptionLanguage">Cancel</button>
+              <button
+                class="bg-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 mr-2"
+                @click="saveNewSubscriptionLanguage"
+              >
+                Save
+              </button>
+              <button
+                class="bg-gray-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                @click="cancelNewSubscriptionLanguage"
+              >
+                Cancel
+              </button>
             </td>
           </tr>
 
@@ -40,18 +60,42 @@
           <tr v-for="language in subscriptionLanguages" :key="language._id" class="hover:bg-gray-50 transition duration-150">
             <template v-if="editMode === language._id">
               <td class="px-6 py-4">
-                <input type="text" v-model="editSubscriptionLanguage.name" class="border border-gray-300 px-4 py-2 rounded-full w-full focus:ring focus:ring-indigo-300 focus:border-indigo-500" />
+                <input
+                  type="text"
+                  v-model="editSubscriptionLanguage.name"
+                  class="border border-gray-300 px-4 py-2 rounded-full w-full focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                />
               </td>
-              <td class="px-6 py-4">
-                <button class="bg-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 mr-2" @click="updateSubscriptionLanguage(language._id)">Save</button>
-                <button class="bg-gray-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300" @click="cancelEdit">Cancel</button>
+              <td class="px-6 py-4 flex space-x-2">
+                <button
+                  class="bg-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  @click="updateSubscriptionLanguage(language._id)"
+                >
+                  Save
+                </button>
+                <button
+                  class="bg-gray-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  @click="cancelEdit"
+                >
+                  Cancel
+                </button>
               </td>
             </template>
             <template v-else>
               <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">{{ language.name }}</td>
               <td class="px-6 py-4 flex items-center space-x-3">
-                <button class="bg-yellow-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400" @click="editSubscriptionLanguageFunc(language)">Edit</button>
-                <button class="bg-red-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400" @click="showDeleteModal(language._id)">Delete</button>
+                <button
+                  class="bg-yellow-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  @click="editSubscriptionLanguageFunc(language)"
+                >
+                  Edit
+                </button>
+                <button
+                  class="bg-red-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  @click="showDeleteModal(language._id)"
+                >
+                  Delete
+                </button>
               </td>
             </template>
           </tr>
@@ -61,7 +105,12 @@
 
     <!-- Add New Language Button -->
     <div class="mt-6">
-      <button class="bg-teal-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400" @click="startAddingNew">Add New Language</button>
+      <button
+        class="bg-teal-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+        @click="startAddingNew"
+      >
+        Add New Language
+      </button>
     </div>
 
     <!-- Confirmation Modal -->
@@ -79,11 +128,15 @@
 <script>
 import subscriptionLanguageService from '../services/subscriptionLanguageService';
 import ConfirmationModal from './ConfirmationModal.vue';
+import Loader from '~/components/Loader.vue';
+import loadingMixin from '~/mixins/loadingMixin.js';
 
 export default {
   components: {
-    ConfirmationModal
+    ConfirmationModal,
+    Loader
   },
+  mixins: [loadingMixin],
   data() {
     return {
       subscriptionLanguages: [],
@@ -91,24 +144,22 @@ export default {
       editMode: null,
       showConfirmationModal: false,
       languageToDelete: null,
-      newSubscriptionLanguage: {
-        name: ''
-      },
-      editSubscriptionLanguage: {
-        name: ''
-      }
+      newSubscriptionLanguage: { name: '' },
+      editSubscriptionLanguage: { name: '' }
     };
   },
   created() {
-    this.loadSubscriptionLanguages();
+    this.runWithLoader(() => this.loadSubscriptionLanguages());
   },
   methods: {
     loadSubscriptionLanguages() {
-      subscriptionLanguageService.getSubscriptionLanguages().then(response => {
-        this.subscriptionLanguages = response.data;
-      }).catch(error => {
-        console.error("There was an error retrieving the subscription languages!", error);
-      });
+      return subscriptionLanguageService.getSubscriptionLanguages()
+        .then(response => {
+          this.subscriptionLanguages = response.data;
+        })
+        .catch(error => {
+          console.error("There was an error retrieving the subscription languages!", error);
+        });
     },
     startAddingNew() {
       this.addingNew = true;
@@ -118,16 +169,18 @@ export default {
       this.addingNew = false;
     },
     resetNewSubscriptionLanguage() {
-      this.newSubscriptionLanguage = {
-        name: ''
-      };
+      this.newSubscriptionLanguage = { name: '' };
     },
     saveNewSubscriptionLanguage() {
-      subscriptionLanguageService.createSubscriptionLanguage(this.newSubscriptionLanguage).then(() => {
-        this.loadSubscriptionLanguages();
-        this.addingNew = false;
-      }).catch(error => {
-        console.error("There was an error saving the subscription language!", error);
+      return this.runWithLoader(() => {
+        return subscriptionLanguageService.createSubscriptionLanguage(this.newSubscriptionLanguage)
+          .then(() => {
+            this.loadSubscriptionLanguages();
+            this.addingNew = false;
+          })
+          .catch(error => {
+            console.error("There was an error saving the subscription language!", error);
+          });
       });
     },
     editSubscriptionLanguageFunc(language) {
@@ -138,11 +191,15 @@ export default {
       this.editMode = null;
     },
     updateSubscriptionLanguage(id) {
-      subscriptionLanguageService.updateSubscriptionLanguage(id, this.editSubscriptionLanguage).then(() => {
-        this.loadSubscriptionLanguages();
-        this.editMode = null;
-      }).catch(error => {
-        console.error("There was an error updating the subscription language!", error);
+      return this.runWithLoader(() => {
+        return subscriptionLanguageService.updateSubscriptionLanguage(id, this.editSubscriptionLanguage)
+          .then(() => {
+            this.loadSubscriptionLanguages();
+            this.editMode = null;
+          })
+          .catch(error => {
+            console.error("There was an error updating the subscription language!", error);
+          });
       });
     },
     showDeleteModal(id) {
@@ -154,11 +211,15 @@ export default {
       this.languageToDelete = null;
     },
     deleteSubscriptionLanguage() {
-      subscriptionLanguageService.deleteSubscriptionLanguage(this.languageToDelete).then(() => {
-        this.loadSubscriptionLanguages();
-        this.hideDeleteModal();
-      }).catch(error => {
-        console.error("There was an error deleting the subscription language!", error);
+      return this.runWithLoader(() => {
+        return subscriptionLanguageService.deleteSubscriptionLanguage(this.languageToDelete)
+          .then(() => {
+            this.loadSubscriptionLanguages();
+            this.hideDeleteModal();
+          })
+          .catch(error => {
+            console.error("There was an error deleting the subscription language!", error);
+          });
       });
     }
   }

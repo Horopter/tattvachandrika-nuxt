@@ -1,6 +1,9 @@
 <template>
-  <div class="container mx-auto mt-5 px-4">
-    <!-- Breadcrumb navigation -->
+  <div class="container mx-auto mt-8 px-4 relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
+
+    <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-4">
       <ol class="flex space-x-2 text-gray-700">
         <li>
@@ -9,7 +12,7 @@
         <li>
           <span>/</span>
         </li>
-        <li class="text-gray-500" aria-current="page">Subscription Plans</li>
+        <li class="text-gray-500 font-medium" aria-current="page">Subscription Plans</li>
       </ol>
     </nav>
 
@@ -18,7 +21,12 @@
 
     <!-- Button to add a new subscription plan -->
     <div class="flex justify-end mb-4">
-      <button class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="addPlan">Add Subscription Plan</button>
+      <button
+        class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        @click="addPlan"
+      >
+        Add Subscription Plan
+      </button>
     </div>
 
     <!-- Table displaying the subscription plans -->
@@ -37,41 +45,81 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <!-- Iterate over each plan in plans array -->
-          <tr v-for="plan in plans" :key="plan._id" class="hover:bg-gray-50">
-            <td class="px-4 py-4 text-lg text-gray-900">{{ plan.name }}</td>
-            <td class="px-4 py-4 text-sm text-gray-900">{{ plan.version }}</td>
-            <td class="px-4 py-4 text-sm text-gray-900">
-              <input v-if="editPlanId === plan._id && isAddingNew" type="date" v-model="plan.start_date" class="border border-gray-300 px-2 py-1 rounded-md w-full" />
-              <span v-else>{{ plan.start_date }}</span>
-            </td>
-            <td class="px-4 py-4 text-sm text-gray-900">
-              <input v-if="editPlanId === plan._id" type="number" v-model="plan.subscription_price" class="border border-gray-300 px-2 py-1 rounded-md w-full" />
-              <span v-else>{{ plan.subscription_price }}</span>
-            </td>
-            <td class="px-4 py-4 text-sm text-gray-900">
-              <select v-if="editPlanId === plan._id" v-model="plan.subscription_language" class="border border-gray-300 px-2 py-1 rounded-md w-full">
-                <option v-for="language in languages" :value="language._id" :key="language._id">{{ language.name }}</option>
-              </select>
-              <span v-else>{{ getLanguageName(plan.subscription_language) }}</span>
-            </td>
-            <td class="px-4 py-4 text-sm text-gray-900">
-              <select v-if="editPlanId === plan._id" v-model="plan.subscription_mode" class="border border-gray-300 px-2 py-1 rounded-md w-full">
-                <option v-for="mode in modes" :value="mode._id" :key="mode._id">{{ mode.name }}</option>
-              </select>
-              <span v-else>{{ getModeName(plan.subscription_mode) }}</span>
-            </td>
-            <td class="px-4 py-4 text-sm text-gray-900">
-              <input v-if="editPlanId === plan._id" type="number" v-model="plan.duration_in_months" class="border border-gray-300 px-2 py-1 rounded-md w-full" />
-              <span v-else>{{ plan.duration_in_months }}</span>
-            </td>
-            <td class="px-4 py-4 text-sm text-gray-900 flex space-x-2">
-              <button v-if="editPlanId === plan._id" @click="savePlan(plan)" class="bg-green-600 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-green-700">Save</button>
-              <button v-if="editPlanId !== plan._id" @click="editPlan(plan._id)" class="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-yellow-600">Edit</button>
-              <button v-if="editPlanId === plan._id" @click="cancelAdd" class="bg-gray-500 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-gray-600">Cancel</button>
-              <button @click="confirmDeletePlan(plan._id)" class="bg-red-600 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-red-700">Delete</button>
-            </td>
-          </tr>
+          <!-- Show a placeholder row if loading -->
+          <template v-if="isLoading">
+            <tr>
+              <td colspan="8" class="text-center p-4">Loading subscription plans...</td>
+            </tr>
+          </template>
+          <!-- Otherwise, render table rows -->
+          <template v-else>
+            <tr v-for="plan in plans" :key="plan._id" class="hover:bg-gray-50">
+              <td class="px-4 py-4 text-lg text-gray-900">{{ plan.name }}</td>
+              <td class="px-4 py-4 text-sm text-gray-900">{{ plan.version }}</td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <template v-if="editPlanId === plan._id">
+                  <input type="date" v-model="editPlanData.start_date" class="border border-gray-300 px-2 py-1 rounded-md w-full" />
+                </template>
+                <template v-else>
+                  {{ plan.start_date }}
+                </template>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <template v-if="editPlanId === plan._id">
+                  <input type="number" v-model="editPlanData.subscription_price" class="border border-gray-300 px-2 py-1 rounded-md w-full" />
+                </template>
+                <template v-else>
+                  {{ plan.subscription_price }}
+                </template>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <template v-if="editPlanId === plan._id">
+                  <select v-model="editPlanData.subscription_language" class="border border-gray-300 px-2 py-1 rounded-md w-full">
+                    <option v-for="language in languages" :value="language._id" :key="language._id">
+                      {{ language.name }}
+                    </option>
+                  </select>
+                </template>
+                <template v-else>
+                  {{ getLanguageName(plan.subscription_language) }}
+                </template>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <template v-if="editPlanId === plan._id">
+                  <select v-model="editPlanData.subscription_mode" class="border border-gray-300 px-2 py-1 rounded-md w-full">
+                    <option v-for="mode in modes" :value="mode._id" :key="mode._id">
+                      {{ mode.name }}
+                    </option>
+                  </select>
+                </template>
+                <template v-else>
+                  {{ getModeName(plan.subscription_mode) }}
+                </template>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <template v-if="editPlanId === plan._id">
+                  <input type="number" v-model="editPlanData.duration_in_months" class="border border-gray-300 px-2 py-1 rounded-md w-full" />
+                </template>
+                <template v-else>
+                  {{ plan.duration_in_months }}
+                </template>
+              </td>
+              <td class="px-4 py-4 text-sm flex space-x-2">
+                <button v-if="editPlanId === plan._id" @click="savePlan(editPlanData, 'isAddingNew')" class="bg-green-600 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-green-700">
+                  Save
+                </button>
+                <button v-if="editPlanId !== plan._id" @click="editPlan(plan)" class="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-yellow-600">
+                  Edit
+                </button>
+                <button v-if="editPlanId === plan._id" @click="cancelEditPlan" class="bg-gray-500 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-gray-600">
+                  Cancel
+                </button>
+                <button @click="confirmDeletePlan(plan._id)" class="bg-red-600 text-white px-3 py-1 rounded-md text-xs shadow-sm hover:bg-red-700">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>
@@ -89,110 +137,143 @@
 </template>
 
 <script>
-import subscriptionPlanService from '../services/subscriptionPlanService';
-import confirmationModal from './ConfirmationModal.vue';
+import subscriptionPlanService from "../services/subscriptionPlanService";
+import ConfirmationModal from "./ConfirmationModal.vue";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
-    confirmationModal
+    ConfirmationModal,
+    Loader,
   },
+  mixins: [loadingMixin],
   data() {
     return {
       plans: [],
       languages: [],
       modes: [],
       editPlanId: null,
+      editPlanData: {}, // A deep copy of the plan being edited
       showConfirmationModal: false,
       planToDelete: null,
-      isAddingNew: false
+      isAddingNew: false,
     };
   },
   created() {
-    this.loadPlans();
-    this.loadLanguages();
-    this.loadModes();
+    this.runWithLoader(() =>
+      Promise.all([this.loadPlans(), this.loadLanguages(), this.loadModes()])
+    );
   },
   methods: {
     loadPlans() {
-      subscriptionPlanService.getPlans().then(response => {
-        this.plans = response.data;
-      }).catch(error => {
-        console.error("There was an error retrieving the subscription plans!", error);
+      return this.runWithLoader(() => {
+        return subscriptionPlanService.getPlans()
+          .then((response) => {
+            this.plans = response.data;
+          })
+          .catch((error) => {
+            console.error("There was an error retrieving the subscription plans!", error);
+          });
       });
     },
     loadLanguages() {
-      subscriptionPlanService.getLanguages().then(response => {
-        this.languages = response.data;
-      }).catch(error => {
-        console.error("There was an error retrieving the languages!", error);
+      return this.runWithLoader(() => {
+        return subscriptionPlanService.getLanguages()
+          .then((response) => {
+            this.languages = response.data;
+          })
+          .catch((error) => {
+            console.error("There was an error retrieving the languages!", error);
+          });
       });
     },
     loadModes() {
-      subscriptionPlanService.getModes().then(response => {
-        this.modes = response.data;
-      }).catch(error => {
-        console.error("There was an error retrieving the modes!", error);
+      return this.runWithLoader(() => {
+        return subscriptionPlanService.getModes()
+          .then((response) => {
+            this.modes = response.data;
+          })
+          .catch((error) => {
+            console.error("There was an error retrieving the modes!", error);
+          });
       });
     },
     addPlan() {
       const newPlan = {
         _id: null,
-        name: 'New Plan',
-        version: '',
-        start_date: '',
+        name: "New Plan",
+        version: "",
+        start_date: "",
         subscription_price: 0,
         subscription_language: this.languages.length > 0 ? this.languages[0]._id : null,
         subscription_mode: this.modes.length > 0 ? this.modes[0]._id : null,
-        duration_in_months: 0
+        duration_in_months: 0,
       };
       this.plans.unshift(newPlan);
-      this.editPlanId = newPlan._id;
+      // For a new plan, set editing state and create a deep copy for editing.
+      this.editPlanId = newPlan._id; // Remains null if unsaved.
+      this.editPlanData = JSON.parse(JSON.stringify(newPlan));
       this.isAddingNew = true;
     },
-    editPlan(planId) {
-      this.editPlanId = planId;
+    editPlan(plan) {
+      this.editPlanId = plan._id;
+      // Create a deep copy for editing.
+      this.editPlanData = JSON.parse(JSON.stringify(plan));
       this.isAddingNew = false;
     },
-    async savePlan(plan) {
-      const existingPlans = this.plans.filter(p =>
-        p.duration_in_months === plan.duration_in_months &&
-        p.subscription_language === plan.subscription_language &&
-        p.subscription_mode === plan.subscription_mode
-      );
-
-      if (existingPlans.length > 0) {
-        const validVersions = existingPlans.map(p => parseInt(p.version.replace('v', ''))).filter(v => !isNaN(v) && v !== null);
-        const highestVersion = validVersions.length > 0 ? Math.max(...validVersions) : 0;
-        plan.version = 'v' + (highestVersion + 1);
-      } else {
-        plan.version = 'v1';
-      }
-
-      const planData = {
-        ...plan,
-        subscription_language: plan.subscription_language,
-        subscription_mode: plan.subscription_mode
-      };
-      if (plan._id) {
-        subscriptionPlanService.updatePlan(plan._id, planData).then(() => {
-          this.loadPlans();
-          this.editPlanId = null;
-        }).catch(error => {
-          console.error("There was an error updating the subscription plan!", error);
-        });
-      } else {
-        subscriptionPlanService.createPlan(planData).then(() => {
-          this.loadPlans();
-          this.editPlanId = null;
-          this.isAddingNew = false;
-        }).catch(error => {
-          console.error("There was an error creating the subscription plan!", error);
-        });
-      }
+    savePlan(editedPlan, condition) {
+      return this.runWithLoader(() => {
+        // Determine version number.
+        const existingPlans = this.plans.filter(
+          (p) =>
+            p.duration_in_months === editedPlan.duration_in_months &&
+            p.subscription_language === editedPlan.subscription_language &&
+            p.subscription_mode === editedPlan.subscription_mode
+        );
+        if (existingPlans.length > 0) {
+          const validVersions = existingPlans
+            .map((p) => parseInt(p.version.replace("v", "")))
+            .filter((v) => !isNaN(v) && v !== null);
+          const highestVersion = validVersions.length > 0 ? Math.max(...validVersions) : 0;
+          editedPlan.version = "v" + (highestVersion + 1);
+        } else {
+          editedPlan.version = "v1";
+        }
+        const planData = {
+          ...editedPlan,
+          subscription_language: editedPlan.subscription_language,
+          subscription_mode: editedPlan.subscription_mode,
+        };
+        let promise;
+        if (editedPlan._id) {
+          promise = subscriptionPlanService.updatePlan(editedPlan._id, planData);
+        } else {
+          promise = subscriptionPlanService.createPlan(planData).then(() => {
+            this.isAddingNew = false;
+          });
+        }
+        return promise
+          .then(() => {
+            this.loadPlans();
+            this.editPlanId = null;
+          })
+          .catch((error) => {
+            console.error("There was an error updating/creating the subscription plan!", error);
+          });
+      }, condition); // Pass the condition, for example "isAddingNew"
     },
-    cancelAdd() {
+    cancelEditPlan() {
+      if (this.isAddingNew) {
+        // For new unsaved plan, remove it from the list.
+        this.plans.shift();
+        this.isAddingNew = false;
+      } else {
+        // For existing plans, simply clear the editing state.
+        // Since editPlanData is a copy, the original plan in the plans array remains unchanged.
+        this.editPlanData = {};
+      }
       this.editPlanId = null;
-      this.isAddingNew = false;
     },
     confirmDeletePlan(planId) {
       this.planToDelete = planId;
@@ -203,23 +284,27 @@ export default {
     },
     deletePlan() {
       if (this.planToDelete) {
-        subscriptionPlanService.deletePlan(this.planToDelete).then(() => {
-          this.loadPlans();
-          this.hideDeleteModal();
-        }).catch(error => {
-          console.error("There was an error deleting the subscription plan!", error);
+        return this.runWithLoader(() => {
+          return subscriptionPlanService.deletePlan(this.planToDelete)
+            .then(() => {
+              this.loadPlans();
+              this.hideDeleteModal();
+            })
+            .catch((error) => {
+              console.error("There was an error deleting the subscription plan!", error);
+            });
         });
       }
     },
     getLanguageName(languageId) {
-      const language = this.languages.find(lang => lang._id === languageId);
-      return language ? language.name : '';
+      const language = this.languages.find((lang) => lang._id === languageId);
+      return language ? language.name : "";
     },
     getModeName(modeId) {
-      const mode = this.modes.find(m => m._id === modeId);
-      return mode ? mode.name : '';
-    }
-  }
+      const mode = this.modes.find((m) => m._id === modeId);
+      return mode ? mode.name : "";
+    },
+  },
 };
 </script>
 
@@ -227,7 +312,8 @@ export default {
 .container {
   max-width: 1200px;
 }
-.table th, .table td {
+.table th,
+.table td {
   padding: 12px 16px;
   text-align: left;
 }

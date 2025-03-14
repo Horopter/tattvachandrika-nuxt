@@ -1,12 +1,14 @@
 <template>
-  <div class="container mx-auto mt-8 px-4">
+  <div class="container mx-auto mt-8 px-4 relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
+
     <!-- Breadcrumb with enhanced styling -->
     <nav aria-label="breadcrumb" class="mb-6">
       <ol class="flex items-center space-x-2 text-gray-700">
         <li>
           <router-link to="/HomePage" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center">
-            <!-- <span class="mr-1">🏠</span>  -->
-             Home
+            Home
           </router-link>
         </li>
         <li><span class="text-gray-400">/</span></li>
@@ -113,10 +115,7 @@
           <li class="mr-2">
             <button 
               class="inline-block py-4 px-6 text-sm font-medium transition duration-200"
-              :class="{ 
-                'border-b-2 border-blue-600 text-blue-600': activeTab === 'active',
-                'text-gray-500 hover:text-blue-600': activeTab !== 'active'
-              }"
+              :class="{ 'border-b-2 border-blue-600 text-blue-600': activeTab === 'active', 'text-gray-500 hover:text-blue-600': activeTab !== 'active' }"
               @click="activeTab = 'active'"
             >
               Active Subscriptions
@@ -125,10 +124,7 @@
           <li>
             <button 
               class="inline-block py-4 px-6 text-sm font-medium transition duration-200"
-              :class="{ 
-                'border-b-2 border-blue-600 text-blue-600': activeTab === 'inactive',
-                'text-gray-500 hover:text-blue-600': activeTab !== 'inactive'
-              }"
+              :class="{ 'border-b-2 border-blue-600 text-blue-600': activeTab === 'inactive', 'text-gray-500 hover:text-blue-600': activeTab !== 'inactive' }"
               @click="activeTab = 'inactive'"
             >
               Inactive Subscriptions
@@ -178,7 +174,7 @@
         </div>
 
         <div v-show="activeTab === 'inactive'" class="overflow-x-auto">
-          <!-- Same table structure as active subscriptions -->
+          <!-- You can use a similar table structure as active subscriptions -->
         </div>
       </div>
     </div>
@@ -204,13 +200,16 @@ import subscriptionPlanService from '../services/subscriptionPlanService';
 import paymentModeService from '../services/paymentModeService';
 import subscriptionService from '../services/subscriptionService';
 import ToastNotification from './ToastNotification.vue';
+import Loader from '~/components/Loader.vue';
+import loadingMixin from '~/mixins/loadingMixin.js';
 
 export default defineComponent({
   components: {
     addEditSubscriptionModal,
-    ToastNotification
+    ToastNotification,
+    Loader
   },
-  
+  mixins: [loadingMixin],
   data() {
     return {
       subscriber: {},
@@ -222,71 +221,84 @@ export default defineComponent({
       types: [],
       showAddEditSubscriptionModal: false,
       currentSubscription: null,
-      activeTab: 'active' // Track the currently active tab
+      activeTab: 'active',
+      isLoading: false
     };
   },
-  
-  created() {
-    this.loadSubscriber();
-    this.loadSubscriptionPlans();
-    this.loadPaymentModes();
-    this.loadCategories();
-    this.loadTypes();
+  async created() {
+    await this.runWithLoader(() =>
+      Promise.all([
+        this.loadSubscriber(),
+        this.loadSubscriptionPlans(),
+        this.loadPaymentModes(),
+        this.loadCategories(),
+        this.loadTypes()
+      ])
+    );
   },
-  // ... rest of the component logic remains the same ...
   methods: {
-
-    
     loadSubscriber() {
       const subscriberId = this.$route.query.id;
-      magazineSubscriberService.getMagazineSubscriberById(subscriberId).then(response => {
-        this.subscriber = response.data;
-        this.loadSubscriptions(subscriberId);
-      }).catch(error => {
-        this.$refs.toast.showToast('Error retrieving subscribers', 'Error', 'danger');
-        console.error("There was an error retrieving the subscriber details!", error);
-      });
+      return magazineSubscriberService.getMagazineSubscriberById(subscriberId)
+        .then(response => {
+          this.subscriber = response.data;
+          return this.loadSubscriptions(subscriberId);
+        })
+        .catch(error => {
+          this.$refs.toast.showToast('Error retrieving subscriber details', 'Error', 'danger');
+          console.error("There was an error retrieving the subscriber details!", error);
+        });
     },
     loadSubscriptions(subscriberId) {
-      subscriptionService.getSubscriptionsBySubscriber(subscriberId).then(response => {
-        this.activeSubscriptions = response.data.filter(sub => sub.active);
-        this.inactiveSubscriptions = response.data.filter(sub => !sub.active);
-      }).catch(error => {
-        this.$refs.toast.showToast('Error retrieving subscriptions', 'Error', 'danger');
-        console.error("There was an error retrieving the subscriptions!", error);
-      });
+      return subscriptionService.getSubscriptionsBySubscriber(subscriberId)
+        .then(response => {
+          this.activeSubscriptions = response.data.filter(sub => sub.active);
+          this.inactiveSubscriptions = response.data.filter(sub => !sub.active);
+        })
+        .catch(error => {
+          this.$refs.toast.showToast('Error retrieving subscriptions', 'Error', 'danger');
+          console.error("There was an error retrieving the subscriptions!", error);
+        });
     },
     loadSubscriptionPlans() {
-      subscriptionPlanService.getPlans().then(response => {
-        this.subscriptionPlans = response.data;
-      }).catch(error => {
-        this.$refs.toast.showToast('Error retrieving subscription plans', 'Error', 'danger');
-        console.error("There was an error retrieving the subscription plans!", error);
-      });
+      return subscriptionPlanService.getPlans()
+        .then(response => {
+          this.subscriptionPlans = response.data;
+        })
+        .catch(error => {
+          this.$refs.toast.showToast('Error retrieving subscription plans', 'Error', 'danger');
+          console.error("There was an error retrieving the subscription plans!", error);
+        });
     },
     loadPaymentModes() {
-      paymentModeService.getPaymentModes().then(response => {
-        this.paymentModes = response.data;
-      }).catch(error => {
-        this.$refs.toast.showToast('Error retrieving payment modes', 'Error', 'danger');
-        console.error("There was an error retrieving the payment modes!", error);
-      });
+      return paymentModeService.getPaymentModes()
+        .then(response => {
+          this.paymentModes = response.data;
+        })
+        .catch(error => {
+          this.$refs.toast.showToast('Error retrieving payment modes', 'Error', 'danger');
+          console.error("There was an error retrieving the payment modes!", error);
+        });
     },
     loadCategories() {
-      magazineSubscriberService.getCategories().then(response => {
-        this.categories = response.data;
-      }).catch(error => {
-        this.$refs.toast.showToast('Error retrieving categories', 'Error', 'danger');
-        console.error("There was an error retrieving the categories!", error);
-      });
+      return magazineSubscriberService.getCategories()
+        .then(response => {
+          this.categories = response.data;
+        })
+        .catch(error => {
+          this.$refs.toast.showToast('Error retrieving categories', 'Error', 'danger');
+          console.error("There was an error retrieving the categories!", error);
+        });
     },
     loadTypes() {
-      magazineSubscriberService.getTypes().then(response => {
-        this.types = response.data;
-      }).catch(error => {
-        this.$refs.toast.showToast('Error retrieving types', 'Error', 'danger');
-        console.error("There was an error retrieving the types!", error);
-      });
+      return magazineSubscriberService.getTypes()
+        .then(response => {
+          this.types = response.data;
+        })
+        .catch(error => {
+          this.$refs.toast.showToast('Error retrieving types', 'Error', 'danger');
+          console.error("There was an error retrieving the types!", error);
+        });
     },
     openAddSubscriptionModal() {
       this.currentSubscription = {
@@ -307,19 +319,23 @@ export default defineComponent({
     },
     saveSubscription(subscription) {
       if (subscription._id) {
-        subscriptionService.updateSubscription(subscription._id, subscription).then(() => {
-          this.loadSubscriptions(this.subscriber._id);
-          this.showAddEditSubscriptionModal = false;
-        }).catch(error => {
-          console.error("There was an error updating the subscription!", error);
-        });
+        subscriptionService.updateSubscription(subscription._id, subscription)
+          .then(() => {
+            this.loadSubscriptions(this.subscriber._id);
+            this.showAddEditSubscriptionModal = false;
+          })
+          .catch(error => {
+            console.error("There was an error updating the subscription!", error);
+          });
       } else {
-        subscriptionService.createSubscription(subscription).then(() => {
-          this.loadSubscriptions(this.subscriber._id);
-          this.showAddEditSubscriptionModal = false;
-        }).catch(error => {
-          console.error("There was an error creating the subscription!", error);
-        });
+        subscriptionService.createSubscription(subscription)
+          .then(() => {
+            this.loadSubscriptions(this.subscriber._id);
+            this.showAddEditSubscriptionModal = false;
+          })
+          .catch(error => {
+            console.error("There was an error creating the subscription!", error);
+          });
       }
     },
     formatDate(date) {
@@ -355,3 +371,11 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+.container {
+  max-width: 1200px;
+}
+
+/* Additional styling remains the same */
+</style>

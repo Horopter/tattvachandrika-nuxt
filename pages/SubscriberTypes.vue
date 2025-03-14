@@ -1,12 +1,15 @@
 <template>
-  <div class="container mx-auto mt-10 px-6">
-    <h2 class="text-3xl font-semibold mb-6 text-gray-800">Subscriber Types</h2>
+  <div class="container mx-auto mt-8 px-6 relative">
+    <!-- Loader Component -->
+    <Loader v-if="isLoading" />
 
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-6">
-      <ol class="flex space-x-2 text-sm text-gray-600">
+      <ol class="flex items-center space-x-2 text-sm text-gray-600">
         <li>
-          <router-link to="/HomePage" class="text-blue-600 hover:underline">Home</router-link>
+          <router-link to="/HomePage" class="text-blue-600 hover:underline">
+            Home
+          </router-link>
         </li>
         <li><span>/</span></li>
         <li class="text-gray-500" aria-current="page">Subscriber Types</li>
@@ -24,13 +27,28 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <!-- Add New Type Row -->
-          <tr v-if="addingNew">
+          <tr v-if="addingNew" class="bg-gray-50">
             <td class="px-6 py-4">
-              <input type="text" v-model="newSubscriberType.name" class="border border-gray-300 px-3 py-2 rounded-md w-full focus:ring focus:ring-blue-200" placeholder="Enter type name" />
+              <input
+                type="text"
+                v-model="newSubscriberType.name"
+                class="border border-gray-300 px-3 py-2 rounded-md w-full focus:ring focus:ring-blue-200"
+                placeholder="Enter type name"
+              />
             </td>
             <td class="px-6 py-4 flex space-x-2">
-              <button class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500" @click="saveNewSubscriberType">Save</button>
-              <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-md hover:bg-gray-400 transition focus:outline-none focus:ring-2 focus:ring-gray-500" @click="cancelNewSubscriberType">Cancel</button>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                @click="saveNewSubscriberType"
+              >
+                Save
+              </button>
+              <button
+                class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-md hover:bg-gray-400 transition focus:outline-none focus:ring-2 focus:ring-gray-500"
+                @click="cancelNewSubscriberType"
+              >
+                Cancel
+              </button>
             </td>
           </tr>
 
@@ -38,18 +56,42 @@
           <tr v-for="type in subscriberTypes" :key="type._id" class="hover:bg-gray-50 transition">
             <template v-if="editMode === type._id">
               <td class="px-6 py-4">
-                <input type="text" v-model="editSubscriberType.name" class="border border-gray-300 px-3 py-2 rounded-md w-full focus:ring focus:ring-blue-200" />
+                <input
+                  type="text"
+                  v-model="editSubscriberType.name"
+                  class="border border-gray-300 px-3 py-2 rounded-md w-full focus:ring focus:ring-blue-200"
+                />
               </td>
               <td class="px-6 py-4 flex space-x-2">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500" @click="updateSubscriberType(type._id)">Save</button>
-                <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-md hover:bg-gray-400 transition focus:outline-none focus:ring-2 focus:ring-gray-500" @click="cancelEdit">Cancel</button>
+                <button
+                  class="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  @click="updateSubscriberType(type._id)"
+                >
+                  Save
+                </button>
+                <button
+                  class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-md hover:bg-gray-400 transition focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  @click="cancelEdit"
+                >
+                  Cancel
+                </button>
               </td>
             </template>
             <template v-else>
               <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">{{ type.name }}</td>
               <td class="px-6 py-4 flex space-x-2">
-                <button class="bg-yellow-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-yellow-600 transition focus:outline-none focus:ring-2 focus:ring-yellow-400" @click="editSubscriberTypeFunc(type)">Edit</button>
-                <button class="bg-red-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500" @click="showDeleteModal(type._id)">Delete</button>
+                <button
+                  class="bg-yellow-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-yellow-600 transition focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  @click="editSubscriberTypeFunc(type)"
+                >
+                  Edit
+                </button>
+                <button
+                  class="bg-red-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500"
+                  @click="showDeleteModal(type._id)"
+                >
+                  Delete
+                </button>
               </td>
             </template>
           </tr>
@@ -58,7 +100,12 @@
     </div>
 
     <!-- Add New Type Button -->
-    <button class="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 mt-5 transition" @click="startAddingNew">Add New Type</button>
+    <button
+      class="bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 mt-5 transition"
+      @click="startAddingNew"
+    >
+      Add New Type
+    </button>
 
     <!-- Confirmation Modal -->
     <confirmation-modal
@@ -75,11 +122,15 @@
 <script>
 import subscriberTypeService from '../services/subscriberTypeService';
 import ConfirmationModal from './ConfirmationModal.vue';
+import Loader from '~/components/Loader.vue';
+import loadingMixin from '~/mixins/loadingMixin.js';
 
 export default {
   components: {
-    ConfirmationModal
+    ConfirmationModal,
+    Loader
   },
+  mixins: [loadingMixin],
   data() {
     return {
       subscriberTypes: [],
@@ -87,24 +138,22 @@ export default {
       editMode: null,
       showConfirmationModal: false,
       typeToDelete: null,
-      newSubscriberType: {
-        name: ''
-      },
-      editSubscriberType: {
-        name: ''
-      }
+      newSubscriberType: { name: '' },
+      editSubscriberType: { name: '' }
     };
   },
   created() {
-    this.loadSubscriberTypes();
+    this.runWithLoader(() => this.loadSubscriberTypes());
   },
   methods: {
     loadSubscriberTypes() {
-      subscriberTypeService.getSubscriberTypes().then(response => {
-        this.subscriberTypes = response.data;
-      }).catch(error => {
-        console.error("There was an error retrieving the subscriber types!", error);
-      });
+      return subscriberTypeService.getSubscriberTypes()
+        .then(response => {
+          this.subscriberTypes = response.data;
+        })
+        .catch(error => {
+          console.error("There was an error retrieving the subscriber types!", error);
+        });
     },
     startAddingNew() {
       this.addingNew = true;
@@ -114,16 +163,18 @@ export default {
       this.addingNew = false;
     },
     resetNewSubscriberType() {
-      this.newSubscriberType = {
-        name: ''
-      };
+      this.newSubscriberType = { name: '' };
     },
     saveNewSubscriberType() {
-      subscriberTypeService.createSubscriberType(this.newSubscriberType).then(() => {
-        this.loadSubscriberTypes();
-        this.addingNew = false;
-      }).catch(error => {
-        console.error("There was an error saving the subscriber type!", error);
+      return this.runWithLoader(() => {
+        return subscriberTypeService.createSubscriberType(this.newSubscriberType)
+          .then(() => {
+            this.loadSubscriberTypes();
+            this.addingNew = false;
+          })
+          .catch(error => {
+            console.error("There was an error saving the subscriber type!", error);
+          });
       });
     },
     editSubscriberTypeFunc(type) {
@@ -134,11 +185,15 @@ export default {
       this.editMode = null;
     },
     updateSubscriberType(id) {
-      subscriberTypeService.updateSubscriberType(id, this.editSubscriberType).then(() => {
-        this.loadSubscriberTypes();
-        this.editMode = null;
-      }).catch(error => {
-        console.error("There was an error updating the subscriber type!", error);
+      return this.runWithLoader(() => {
+        return subscriberTypeService.updateSubscriberType(id, this.editSubscriberType)
+          .then(() => {
+            this.loadSubscriberTypes();
+            this.editMode = null;
+          })
+          .catch(error => {
+            console.error("There was an error updating the subscriber type!", error);
+          });
       });
     },
     showDeleteModal(id) {
@@ -150,11 +205,15 @@ export default {
       this.typeToDelete = null;
     },
     deleteSubscriberType() {
-      subscriberTypeService.deleteSubscriberType(this.typeToDelete).then(() => {
-        this.loadSubscriberTypes();
-        this.hideDeleteModal();
-      }).catch(error => {
-        console.error("There was an error deleting the subscriber type!", error);
+      return this.runWithLoader(() => {
+        return subscriberTypeService.deleteSubscriberType(this.typeToDelete)
+          .then(() => {
+            this.loadSubscriberTypes();
+            this.hideDeleteModal();
+          })
+          .catch(error => {
+            console.error("There was an error deleting the subscriber type!", error);
+          });
       });
     }
   }

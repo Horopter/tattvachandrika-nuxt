@@ -6,7 +6,7 @@ const apiUrls = {
     localhost: "http://localhost:3000"
   };
 
-  console.log("Horopter:: API_ENV:", process, process.env, process.env.API_ENV);
+  console.log("Horopter:: API_ENV:", process.env, process.env.API_ENV);
   
   // Determine the environment from the API_ENV variable (default to 'localhost')
   const env = process.env.API_ENV || "localhost";

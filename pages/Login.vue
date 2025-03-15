@@ -7,7 +7,7 @@
     <header class="bg-orange-50">
       <div class="container mx-auto flex justify-between items-center p-4">
         <h1 class="text-xl font-bold text-orange-700">Hari Sarvottama</h1>
-        <img src="../assets/images/Hanuma1.png" alt="hanuma" />
+        <img src="../assets/images/Hanuma.png" alt="Hanuma" />
         <div class="relative flex flex-col items-center">
           <svg width="300" height="200">
             <defs>
@@ -29,7 +29,7 @@
             style="top: 80px; left: 50%; transform: translateX(-50%)"
           />
         </div>
-        <img src="../assets/images/hanuma2.png" alt="Bheema" />
+        <img src="../assets/images/Garuda.png" alt="Garuda" />
         <h1 class="text-xl font-bold text-orange-700">Vaayu Jeevottama</h1>
       </div>
     </header>

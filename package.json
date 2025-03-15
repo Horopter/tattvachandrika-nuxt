@@ -18,6 +18,8 @@
     "dayjs": "^1.11.13",
     "flatpickr": "^4.6.13",
     "nuxt": "^3.12.4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.14",
     "vue": "latest",
     "vue-flatpickr-component": "^12.0.0",
     "vue-router": "^4.5.0"

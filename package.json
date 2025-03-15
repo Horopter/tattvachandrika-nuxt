@@ -23,5 +23,9 @@
     "vue": "latest",
     "vue-flatpickr-component": "^12.0.0",
     "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.14",
+    "autoprefixer": "^10.4.21"
   }
 }

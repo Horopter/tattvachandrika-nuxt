@@ -130,15 +130,15 @@
 </template>
 
 <script>
-import subscriptionModeService from '../services/subscriptionModeService';
-import ConfirmationModal from './ConfirmationModal.vue';
-import Loader from '~/components/Loader.vue';
-import loadingMixin from '~/mixins/loadingMixin.js';
+import subscriptionModeService from "../services/subscriptionModeService";
+import ConfirmationModal from "./ConfirmationModal.vue";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
     ConfirmationModal,
-    Loader
+    Loader,
   },
   mixins: [loadingMixin],
   data() {
@@ -148,8 +148,8 @@ export default {
       editMode: null,
       showConfirmationModal: false,
       modeToDelete: null,
-      newSubscriptionMode: { name: '' },
-      editSubscriptionMode: { name: '' }
+      newSubscriptionMode: { name: "" },
+      editSubscriptionMode: { name: "" },
     };
   },
   created() {
@@ -173,7 +173,7 @@ export default {
       this.addingNew = false;
     },
     resetNewSubscriptionMode() {
-      this.newSubscriptionMode = { name: '' };
+      this.newSubscriptionMode = { name: "" };
     },
     saveNewSubscriptionMode() {
       return this.runWithLoader(() => {
@@ -225,8 +225,8 @@ export default {
             console.error("There was an error deleting the subscription mode!", error);
           });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

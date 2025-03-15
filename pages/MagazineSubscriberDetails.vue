@@ -49,41 +49,41 @@
             <div class="space-y-4">
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">Address:</span>
-                <span class="text-gray-800 font-medium">{{
-                  subscriber.address
-                }}</span>
+                <span class="text-gray-800 font-medium">
+                  {{ subscriber.address }}
+                </span>
               </div>
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">City/Town:</span>
-                <span class="text-gray-800 font-medium">{{
-                  subscriber.city_town
-                }}</span>
+                <span class="text-gray-800 font-medium">
+                  {{ subscriber.city_town }}
+                </span>
               </div>
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">State:</span>
-                <span class="text-gray-800 font-medium">{{
-                  subscriber.state
-                }}</span>
+                <span class="text-gray-800 font-medium">
+                  {{ subscriber.state }}
+                </span>
               </div>
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">Pincode:</span>
-                <span class="text-gray-800 font-medium">{{
-                  subscriber.pincode
-                }}</span>
+                <span class="text-gray-800 font-medium">
+                  {{ subscriber.pincode }}
+                </span>
               </div>
             </div>
             <div class="space-y-4">
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">Phone:</span>
-                <span class="text-gray-800 font-medium">{{
-                  subscriber.phone
-                }}</span>
+                <span class="text-gray-800 font-medium">
+                  {{ subscriber.phone }}
+                </span>
               </div>
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">Email:</span>
-                <span class="text-gray-800 font-medium">{{
-                  subscriber.email
-                }}</span>
+                <span class="text-gray-800 font-medium">
+                  {{ subscriber.email }}
+                </span>
               </div>
               <div class="flex items-center">
                 <span class="text-gray-500 w-24">Category:</span>
@@ -152,8 +152,7 @@
             <button
               class="inline-block py-4 px-6 text-sm font-medium transition duration-200"
               :class="{
-                'border-b-2 border-blue-600 text-blue-600':
-                  activeTab === 'active',
+                'border-b-2 border-blue-600 text-blue-600': activeTab === 'active',
                 'text-gray-500 hover:text-blue-600': activeTab !== 'active',
               }"
               @click="activeTab = 'active'"
@@ -165,8 +164,7 @@
             <button
               class="inline-block py-4 px-6 text-sm font-medium transition duration-200"
               :class="{
-                'border-b-2 border-blue-600 text-blue-600':
-                  activeTab === 'inactive',
+                'border-b-2 border-blue-600 text-blue-600': activeTab === 'inactive',
                 'text-gray-500 hover:text-blue-600': activeTab !== 'inactive',
               }"
               @click="activeTab = 'inactive'"
@@ -184,39 +182,25 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Start Date
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   End Date
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Plan
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Payment
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -269,39 +253,25 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Start Date
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   End Date
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Plan
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Payment
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -368,6 +338,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import dayjs from "dayjs";
 import addEditSubscriptionModal from "./AddEditSubscriptionModal.vue";
 import magazineSubscriberService from "../services/magazineSubscriberService";
 import subscriptionPlanService from "../services/subscriptionPlanService";
@@ -376,7 +347,6 @@ import subscriptionService from "../services/subscriptionService";
 import ToastNotification from "./ToastNotification.vue";
 import Loader from "~/components/Loader.vue";
 import loadingMixin from "~/mixins/loadingMixin.js";
-import dayjs from "dayjs";
 
 export default defineComponent({
   components: {
@@ -397,7 +367,6 @@ export default defineComponent({
       showAddEditSubscriptionModal: false,
       currentSubscription: null,
       activeTab: "active",
-      isLoading: false,
     };
   },
   async created() {
@@ -414,101 +383,114 @@ export default defineComponent({
   methods: {
     loadSubscriber() {
       const subscriberId = this.$route.query.id;
-      return magazineSubscriberService
-        .getMagazineSubscriberById(subscriberId)
-        .then((response) => {
-          this.subscriber = response.data;
-          return this.loadSubscriptions(subscriberId);
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error retrieving subscriber details",
-            "Error",
-            "danger"
-          );
-          console.error("Error retrieving subscriber details:", error);
-        });
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .getMagazineSubscriberById(subscriberId)
+          .then((response) => {
+            this.subscriber = response.data;
+            return this.loadSubscriptions(subscriberId);
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error retrieving subscriber details",
+              "Error",
+              "danger"
+            );
+            console.error("Error retrieving subscriber details:", error);
+          })
+      );
     },
     loadSubscriptions(subscriberId) {
-      return subscriptionService
-        .getSubscriptionsBySubscriber(subscriberId)
-        .then((response) => {
-          this.activeSubscriptions = response.data.filter((sub) => sub.active);
-          this.inactiveSubscriptions = response.data.filter(
-            (sub) => !sub.active
-          );
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error retrieving subscriptions",
-            "Error",
-            "danger"
-          );
-          console.error("Error retrieving subscriptions:", error);
-        });
+      return this.runWithLoader(() =>
+        subscriptionService
+          .getSubscriptionsBySubscriber(subscriberId)
+          .then((response) => {
+            this.activeSubscriptions = response.data.filter(
+              (sub) => sub.active
+            );
+            this.inactiveSubscriptions = response.data.filter(
+              (sub) => !sub.active
+            );
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error retrieving subscriptions",
+              "Error",
+              "danger"
+            );
+            console.error("Error retrieving subscriptions:", error);
+          })
+      );
     },
     loadSubscriptionPlans() {
-      return subscriptionPlanService
-        .getPlans()
-        .then((response) => {
-          this.subscriptionPlans = response.data;
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error retrieving subscription plans",
-            "Error",
-            "danger"
-          );
-          console.error("Error retrieving subscription plans:", error);
-        });
+      return this.runWithLoader(() =>
+        subscriptionPlanService
+          .getPlans()
+          .then((response) => {
+            this.subscriptionPlans = response.data;
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error retrieving subscription plans",
+              "Error",
+              "danger"
+            );
+            console.error("Error retrieving subscription plans:", error);
+          })
+      );
     },
     loadPaymentModes() {
-      return paymentModeService
-        .getPaymentModes()
-        .then((response) => {
-          this.paymentModes = response.data;
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error retrieving payment modes",
-            "Error",
-            "danger"
-          );
-          console.error("Error retrieving payment modes:", error);
-        });
+      return this.runWithLoader(() =>
+        paymentModeService
+          .getPaymentModes()
+          .then((response) => {
+            this.paymentModes = response.data;
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error retrieving payment modes",
+              "Error",
+              "danger"
+            );
+            console.error("Error retrieving payment modes:", error);
+          })
+      );
     },
     loadCategories() {
-      return magazineSubscriberService
-        .getCategories()
-        .then((response) => {
-          this.categories = response.data;
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error retrieving categories",
-            "Error",
-            "danger"
-          );
-          console.error("Error retrieving categories:", error);
-        });
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .getCategories()
+          .then((response) => {
+            this.categories = response.data;
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error retrieving categories",
+              "Error",
+              "danger"
+            );
+            console.error("Error retrieving categories:", error);
+          })
+      );
     },
     loadTypes() {
-      return magazineSubscriberService
-        .getTypes()
-        .then((response) => {
-          this.types = response.data;
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error retrieving types",
-            "Error",
-            "danger"
-          );
-          console.error("Error retrieving types:", error);
-        });
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .getTypes()
+          .then((response) => {
+            this.types = response.data;
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error retrieving types",
+              "Error",
+              "danger"
+            );
+            console.error("Error retrieving types:", error);
+          })
+      );
     },
     openAddSubscriptionModal() {
-      // Initialize a new subscription with defaults. Use current date for date fields.
       this.currentSubscription = {
         subscriber: this.subscriber._id,
         subscription_plan: "",
@@ -520,7 +502,6 @@ export default defineComponent({
       this.showAddEditSubscriptionModal = true;
     },
     openEditSubscriptionModal(subscription) {
-      // Clone the subscription and convert date fields to ISO format ("YYYY-MM-DD")
       this.currentSubscription = {
         ...subscription,
         start_date: subscription.start_date
@@ -537,25 +518,29 @@ export default defineComponent({
     },
     saveSubscription(subscription) {
       if (subscription._id) {
-        subscriptionService
-          .updateSubscription(subscription._id, subscription)
-          .then(() => {
-            this.loadSubscriptions(this.subscriber._id);
-            this.showAddEditSubscriptionModal = false;
-          })
-          .catch((error) => {
-            console.error("Error updating subscription:", error);
-          });
+        return this.runWithLoader(() =>
+          subscriptionService
+            .updateSubscription(subscription._id, subscription)
+            .then(() => {
+              this.loadSubscriptions(this.subscriber._id);
+              this.showAddEditSubscriptionModal = false;
+            })
+            .catch((error) => {
+              console.error("Error updating subscription:", error);
+            })
+        );
       } else {
-        subscriptionService
-          .createSubscription(subscription)
-          .then(() => {
-            this.loadSubscriptions(this.subscriber._id);
-            this.showAddEditSubscriptionModal = false;
-          })
-          .catch((error) => {
-            console.error("Error creating subscription:", error);
-          });
+        return this.runWithLoader(() =>
+          subscriptionService
+            .createSubscription(subscription)
+            .then(() => {
+              this.loadSubscriptions(this.subscriber._id);
+              this.showAddEditSubscriptionModal = false;
+            })
+            .catch((error) => {
+              console.error("Error creating subscription:", error);
+            })
+        );
       }
     },
     formatDate(date) {

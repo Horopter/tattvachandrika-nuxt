@@ -1,44 +1,34 @@
-// ~/mixins/loadingMixin.js
 export default {
   data() {
     return {
-      isLoading: false,
+      // Global counter of pending HTTP requests
+      pendingRequests: 0,
     };
+  },
+  computed: {
+    // Global loader is visible if any HTTP request is still pending
+    isLoading() {
+      return this.pendingRequests > 0;
+    },
   },
   methods: {
     /**
-     * Wraps an async operation. The loader remains visible until the promise resolves,
-     * and until all passed conditions are false.
+     * Wraps an async operation.
+     * The loader remains visible until the Promise returned by promiseFunc() settles.
      *
      * @param {Function} promiseFunc - A function that returns a Promise.
-     * @param {Array|string|Function} [condition] - (Optional) Either:
-     *    - An array of property names (strings) that should be false before hiding the loader,
-     *    - A single property name (string), or
-     *    - A function that returns a boolean indicating whether to keep the loader visible.
-     *    If not provided, the loader will be hidden after the promise completes.
+     * @returns {Promise} - The same promise, with the loader automatically toggled.
      */
-    runWithLoader(promiseFunc, condition) {
-      this.isLoading = true;
-      return promiseFunc().finally(() => {
-        const clearLoader = () => {
-          let shouldWait = false;
-          if (typeof condition === 'function') {
-            shouldWait = condition();
-          } else if (Array.isArray(condition)) {
-            shouldWait = condition.some(key => !!this[key]);
-          } else if (typeof condition === 'string') {
-            shouldWait = !!this[condition];
-          }
-          if (shouldWait) {
-            setTimeout(clearLoader, 50);
-          } else {
-            this.$nextTick(() => {
-                this.isLoading = false;
-            });
-          }
-        };
-        clearLoader();
-      });
+    runWithLoader(promiseFunc) {
+      this.pendingRequests++;
+      return promiseFunc()
+        .catch((error) => {
+          console.error("Error during async operation:", error);
+          throw error;
+        })
+        .finally(() => {
+          this.pendingRequests--;
+        });
     },
   },
 };

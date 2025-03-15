@@ -126,15 +126,15 @@
 </template>
 
 <script>
-import subscriptionLanguageService from '../services/subscriptionLanguageService';
-import ConfirmationModal from './ConfirmationModal.vue';
-import Loader from '~/components/Loader.vue';
-import loadingMixin from '~/mixins/loadingMixin.js';
+import subscriptionLanguageService from "../services/subscriptionLanguageService";
+import ConfirmationModal from "./ConfirmationModal.vue";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
     ConfirmationModal,
-    Loader
+    Loader,
   },
   mixins: [loadingMixin],
   data() {
@@ -144,8 +144,8 @@ export default {
       editMode: null,
       showConfirmationModal: false,
       languageToDelete: null,
-      newSubscriptionLanguage: { name: '' },
-      editSubscriptionLanguage: { name: '' }
+      newSubscriptionLanguage: { name: "" },
+      editSubscriptionLanguage: { name: "" },
     };
   },
   created() {
@@ -153,11 +153,12 @@ export default {
   },
   methods: {
     loadSubscriptionLanguages() {
-      return subscriptionLanguageService.getSubscriptionLanguages()
-        .then(response => {
+      return subscriptionLanguageService
+        .getSubscriptionLanguages()
+        .then((response) => {
           this.subscriptionLanguages = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("There was an error retrieving the subscription languages!", error);
         });
     },
@@ -169,16 +170,17 @@ export default {
       this.addingNew = false;
     },
     resetNewSubscriptionLanguage() {
-      this.newSubscriptionLanguage = { name: '' };
+      this.newSubscriptionLanguage = { name: "" };
     },
     saveNewSubscriptionLanguage() {
       return this.runWithLoader(() => {
-        return subscriptionLanguageService.createSubscriptionLanguage(this.newSubscriptionLanguage)
+        return subscriptionLanguageService
+          .createSubscriptionLanguage(this.newSubscriptionLanguage)
           .then(() => {
             this.loadSubscriptionLanguages();
             this.addingNew = false;
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("There was an error saving the subscription language!", error);
           });
       });
@@ -192,12 +194,13 @@ export default {
     },
     updateSubscriptionLanguage(id) {
       return this.runWithLoader(() => {
-        return subscriptionLanguageService.updateSubscriptionLanguage(id, this.editSubscriptionLanguage)
+        return subscriptionLanguageService
+          .updateSubscriptionLanguage(id, this.editSubscriptionLanguage)
           .then(() => {
             this.loadSubscriptionLanguages();
             this.editMode = null;
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("There was an error updating the subscription language!", error);
           });
       });
@@ -212,17 +215,18 @@ export default {
     },
     deleteSubscriptionLanguage() {
       return this.runWithLoader(() => {
-        return subscriptionLanguageService.deleteSubscriptionLanguage(this.languageToDelete)
+        return subscriptionLanguageService
+          .deleteSubscriptionLanguage(this.languageToDelete)
           .then(() => {
             this.loadSubscriptionLanguages();
             this.hideDeleteModal();
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("There was an error deleting the subscription language!", error);
           });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

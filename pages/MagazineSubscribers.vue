@@ -189,7 +189,7 @@
                   Edit
                 </button>
                 <button
-                  class="bg-red-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-yellow-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  class="bg-red-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-orange-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   @click="confirmDeleteSubscriber(subscriber._id)"
                 >
                   Delete
@@ -255,10 +255,10 @@
                   Edit
                 </button>
                 <button
-                  class="bg-red-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-orange-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  @click="confirmDeleteSubscriber(subscriber._id)"
+                  class="bg-green-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  @click="activateSubscriber(subscriber._id)"
                 >
-                  Delete
+                  Activate
                 </button>
               </td>
             </tr>
@@ -415,22 +415,26 @@ export default {
       });
     },
     loadCategories() {
-      magazineSubscriberService.getCategories()
-        .then((response) => {
-          this.categories = response.data;
-        })
-        .catch((error) => {
-          console.error("There was an error retrieving the categories!", error);
-        });
+      return this.runWithLoader(() => {
+        return magazineSubscriberService.getCategories()
+          .then((response) => {
+            this.categories = response.data;
+          })
+          .catch((error) => {
+            console.error("There was an error retrieving the categories!", error);
+          });
+      });
     },
     loadTypes() {
-      magazineSubscriberService.getTypes()
-        .then((response) => {
-          this.types = response.data;
-        })
-        .catch((error) => {
-          console.error("There was an error retrieving the types!", error);
-        });
+      return this.runWithLoader(() => {
+        return magazineSubscriberService.getTypes()
+          .then((response) => {
+            this.types = response.data;
+          })
+          .catch((error) => {
+            console.error("There was an error retrieving the types!", error);
+          });
+      });
     },
     openAddSubscriberModal() {
       this.selectedSubscriber = {
@@ -457,42 +461,46 @@ export default {
     },
     saveSubscriber(subscriber) {
       if (subscriber._id) {
-        magazineSubscriberService.updateMagazineSubscriber(subscriber._id, subscriber)
-          .then(() => {
-            this.loadSubscribers();
-            this.showAddEditSubscriberModal = false;
-          })
-          .catch((error) => {
-            alert("There was an error updating the subscriber!");
-            console.error("There was an error updating the subscriber!", error);
-          });
+        return this.runWithLoader(() =>
+          magazineSubscriberService.updateMagazineSubscriber(subscriber._id, subscriber)
+            .then(() => {
+              this.loadSubscribers();
+              this.showAddEditSubscriberModal = false;
+            })
+            .catch((error) => {
+              alert("There was an error updating the subscriber!");
+              console.error("There was an error updating the subscriber!", error);
+            })
+        );
       } else {
-        magazineSubscriberService.createMagazineSubscriber(subscriber)
-          .then(() => {
-            this.loadSubscribers();
-            this.showAddEditSubscriberModal = false;
-            alert("User added successfully!");
-          })
-          .catch((error) => {
-            if (error.response && error.response.data) {
-              const errorData = error.response.data;
-              console.error("API Error Response:", errorData);
-              let errorMessages = [];
-              Object.keys(errorData).forEach((field) => {
-                if (Array.isArray(errorData[field])) {
-                  errorMessages.push(`${field.replace("_", " ")}: ${errorData[field][0]}`);
+        return this.runWithLoader(() =>
+          magazineSubscriberService.createMagazineSubscriber(subscriber)
+            .then(() => {
+              this.loadSubscribers();
+              this.showAddEditSubscriberModal = false;
+              alert("User added successfully!");
+            })
+            .catch((error) => {
+              if (error.response && error.response.data) {
+                const errorData = error.response.data;
+                console.error("API Error Response:", errorData);
+                let errorMessages = [];
+                Object.keys(errorData).forEach((field) => {
+                  if (Array.isArray(errorData[field])) {
+                    errorMessages.push(`${field.replace("_", " ")}: ${errorData[field][0]}`);
+                  }
+                });
+                if (errorMessages.length > 0) {
+                  alert(errorMessages.join("\n"));
+                } else {
+                  alert("There was an error adding the subscriber!");
                 }
-              });
-              if (errorMessages.length > 0) {
-                alert(errorMessages.join("\n"));
               } else {
-                alert("There was an error adding the subscriber!");
+                alert("Something went wrong! Unable to add the subscriber.");
+                console.error("Unknown API Error:", error);
               }
-            } else {
-              alert("Something went wrong! Unable to add the subscriber.");
-              console.error("Unknown API Error:", error);
-            }
-          });
+            })
+        );
       }
     },
     confirmDeleteSubscriber(subscriberId) {
@@ -504,27 +512,31 @@ export default {
     },
     deleteSubscriber() {
       if (this.subscriberToDelete) {
-        magazineSubscriberService.softDeleteMagazineSubscriber(this.subscriberToDelete)
-          .then(() => {
-            this.loadSubscribers();
-            this.hideDeleteModal();
-          })
-          .catch((error) => {
-            console.error("There was an error deleting the subscriber!", error);
-          });
+        return this.runWithLoader(() =>
+          magazineSubscriberService.softDeleteMagazineSubscriber(this.subscriberToDelete)
+            .then(() => {
+              this.loadSubscribers();
+              this.hideDeleteModal();
+            })
+            .catch((error) => {
+              console.error("There was an error deleting the subscriber!", error);
+            })
+        );
       }
     },
     activateSubscriber(subscriberId) {
-      magazineSubscriberService.activateMagazineSubscriber(subscriberId)
-        .then(() => {
-          this.loadSubscribers();
-        })
-        .catch((error) => {
-          console.error("There was an error activating the subscriber!", error);
-        });
+      return this.runWithLoader(() =>
+        magazineSubscriberService.activateMagazineSubscriber(subscriberId)
+          .then(() => {
+            this.loadSubscribers();
+          })
+          .catch((error) => {
+            console.error("There was an error activating the subscriber!", error);
+          })
+      );
     },
     performSearch() {
-      this.runWithLoader(() => {
+      return this.runWithLoader(() => {
         const params = {
           filter: this.searchFilter,
           query: this.searchQuery

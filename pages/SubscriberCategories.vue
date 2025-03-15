@@ -86,7 +86,9 @@
               </td>
             </template>
             <template v-else>
-              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">{{ category.name }}</td>
+              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">
+                {{ category.name }}
+              </td>
               <td class="px-6 py-4">
                 <button
                   class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 mr-2 transition-all"
@@ -128,15 +130,15 @@
 </template>
 
 <script>
-import subscriberCategoryService from '../services/subscriberCategoryService';
-import ConfirmationModal from './ConfirmationModal.vue';
-import Loader from '~/components/Loader.vue';
-import loadingMixin from '~/mixins/loadingMixin.js';
+import subscriberCategoryService from "../services/subscriberCategoryService";
+import ConfirmationModal from "./ConfirmationModal.vue";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
     ConfirmationModal,
-    Loader
+    Loader,
   },
   mixins: [loadingMixin],
   data() {
@@ -147,11 +149,11 @@ export default {
       showConfirmationModal: false,
       categoryToDelete: null,
       newSubscriberCategory: {
-        name: ''
+        name: "",
       },
       editSubscriberCategory: {
-        name: ''
-      }
+        name: "",
+      },
     };
   },
   created() {
@@ -159,11 +161,12 @@ export default {
   },
   methods: {
     loadSubscriberCategories() {
-      return subscriberCategoryService.getSubscriberCategories()
-        .then(response => {
+      return subscriberCategoryService
+        .getSubscriberCategories()
+        .then((response) => {
           this.subscriberCategories = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("There was an error retrieving the subscriber categories!", error);
         });
     },
@@ -175,16 +178,17 @@ export default {
       this.addingNew = false;
     },
     resetNewSubscriberCategory() {
-      this.newSubscriberCategory = { name: '' };
+      this.newSubscriberCategory = { name: "" };
     },
     saveNewSubscriberCategory() {
       return this.runWithLoader(() => {
-        return subscriberCategoryService.createSubscriberCategory(this.newSubscriberCategory)
+        return subscriberCategoryService
+          .createSubscriberCategory(this.newSubscriberCategory)
           .then(() => {
             this.loadSubscriberCategories();
             this.addingNew = false;
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("There was an error saving the subscriber category!", error);
           });
       });
@@ -198,12 +202,13 @@ export default {
     },
     updateSubscriberCategory(id) {
       return this.runWithLoader(() => {
-        return subscriberCategoryService.updateSubscriberCategory(id, this.editSubscriberCategory)
+        return subscriberCategoryService
+          .updateSubscriberCategory(id, this.editSubscriberCategory)
           .then(() => {
             this.loadSubscriberCategories();
             this.editMode = null;
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("There was an error updating the subscriber category!", error);
           });
       });
@@ -218,17 +223,18 @@ export default {
     },
     deleteSubscriberCategory() {
       return this.runWithLoader(() => {
-        return subscriberCategoryService.deleteSubscriberCategory(this.categoryToDelete)
+        return subscriberCategoryService
+          .deleteSubscriberCategory(this.categoryToDelete)
           .then(() => {
             this.loadSubscriberCategories();
             this.hideDeleteModal();
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("There was an error deleting the subscriber category!", error);
           });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

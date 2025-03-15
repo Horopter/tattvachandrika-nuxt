@@ -21,8 +21,12 @@
       <table class="min-w-full bg-white divide-y divide-gray-200">
         <thead class="bg-gray-100">
           <tr>
-            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Name</th>
-            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+              Name
+            </th>
+            <th class="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -78,7 +82,9 @@
               </td>
             </template>
             <template v-else>
-              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">{{ type.name }}</td>
+              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">
+                {{ type.name }}
+              </td>
               <td class="px-6 py-4 flex space-x-2">
                 <button
                   class="bg-yellow-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-yellow-600 transition focus:outline-none focus:ring-2 focus:ring-yellow-400"
@@ -120,15 +126,15 @@
 </template>
 
 <script>
-import subscriberTypeService from '../services/subscriberTypeService';
-import ConfirmationModal from './ConfirmationModal.vue';
-import Loader from '~/components/Loader.vue';
-import loadingMixin from '~/mixins/loadingMixin.js';
+import subscriberTypeService from "../services/subscriberTypeService";
+import ConfirmationModal from "./ConfirmationModal.vue";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   components: {
     ConfirmationModal,
-    Loader
+    Loader,
   },
   mixins: [loadingMixin],
   data() {
@@ -138,8 +144,8 @@ export default {
       editMode: null,
       showConfirmationModal: false,
       typeToDelete: null,
-      newSubscriberType: { name: '' },
-      editSubscriberType: { name: '' }
+      newSubscriberType: { name: "" },
+      editSubscriberType: { name: "" },
     };
   },
   created() {
@@ -163,7 +169,7 @@ export default {
       this.addingNew = false;
     },
     resetNewSubscriberType() {
-      this.newSubscriberType = { name: '' };
+      this.newSubscriberType = { name: "" };
     },
     saveNewSubscriberType() {
       return this.runWithLoader(() => {
@@ -215,8 +221,8 @@ export default {
             console.error("There was an error deleting the subscriber type!", error);
           });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

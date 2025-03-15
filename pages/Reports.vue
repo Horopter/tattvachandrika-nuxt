@@ -134,23 +134,23 @@
 </template>
 
 <script>
-import reportService from '../services/reportService';
-import subscriberTypeService from '../services/subscriberTypeService';
-import subscriberCategoryService from '../services/subscriberCategoryService';
-import Loader from '~/components/Loader.vue';
-import loadingMixin from '~/mixins/loadingMixin.js';
+import reportService from "../services/reportService";
+import subscriberTypeService from "../services/subscriberTypeService";
+import subscriberCategoryService from "../services/subscriberCategoryService";
+import Loader from "~/components/Loader.vue";
+import loadingMixin from "~/mixins/loadingMixin.js";
 
 export default {
   mixins: [loadingMixin],
   components: {
-    Loader
+    Loader,
   },
   data() {
     return {
       form: {
-        subscriberStatus: 'active',
-        subscriberType: '',
-        subscriberCategory: '',
+        subscriberStatus: "active",
+        subscriberType: "",
+        subscriberCategory: "",
       },
       isActive: true,
       reportGenerated: false,
@@ -160,36 +160,35 @@ export default {
     };
   },
   created() {
-    // Wrap fetching subscriber types and categories in the loader
+    // Wrap fetching subscriber types and categories in runWithLoader
     this.runWithLoader(() =>
-      Promise.all([
-        this.fetchSubscriberTypes(),
-        this.fetchSubscriberCategories()
-      ])
+      Promise.all([this.fetchSubscriberTypes(), this.fetchSubscriberCategories()])
     );
   },
   methods: {
     toggleSubscriberStatus() {
-      this.form.subscriberStatus = this.isActive ? 'active' : 'inactive';
+      this.form.subscriberStatus = this.isActive ? "active" : "inactive";
     },
     fetchSubscriberTypes() {
-      return subscriberTypeService.getSubscriberTypes()
+      return subscriberTypeService
+        .getSubscriberTypes()
         .then((response) => {
           this.subscriberTypes = response.data;
         })
         .catch((error) => {
-          console.error('Error fetching subscriber types:', error);
-          alert('Failed to fetch subscriber types. Please try again.');
+          console.error("Error fetching subscriber types:", error);
+          alert("Failed to fetch subscriber types. Please try again.");
         });
     },
     fetchSubscriberCategories() {
-      return subscriberCategoryService.getSubscriberCategories()
+      return subscriberCategoryService
+        .getSubscriberCategories()
         .then((response) => {
           this.subscriberCategories = response.data;
         })
         .catch((error) => {
-          console.error('Error fetching subscriber categories:', error);
-          alert('Failed to fetch subscriber categories. Please try again.');
+          console.error("Error fetching subscriber categories:", error);
+          alert("Failed to fetch subscriber categories. Please try again.");
         });
     },
     generateReport() {
@@ -199,7 +198,8 @@ export default {
         subscriberCategory: this.form.subscriberCategory,
       };
       return this.runWithLoader(() => {
-        return reportService.getReport(filters)
+        return reportService
+          .getReport(filters)
           .then((response) => {
             if (response.data.length > 0) {
               this.reportData = response.data;
@@ -210,10 +210,10 @@ export default {
             }
           })
           .catch((error) => {
-            console.error('There was an error fetching the report!', error);
+            console.error("There was an error fetching the report!", error);
             this.reportData = [];
             this.reportGenerated = false;
-            alert('Failed to fetch the report. Please try again.');
+            alert("Failed to fetch the report. Please try again.");
           });
       });
     },
@@ -224,23 +224,29 @@ export default {
         subscriberCategory: this.form.subscriberCategory,
       };
       return this.runWithLoader(() => {
-        return reportService.downloadPdfReport(filters)
+        return reportService
+          .downloadPdfReport(filters)
           .then((response) => {
             const now = new Date();
             const formattedDate = now.toISOString().slice(0, 10);
-            const formattedTime = now.toISOString().slice(11, 19).replace(/:/g, '-');
+            const formattedTime = now
+              .toISOString()
+              .slice(11, 19)
+              .replace(/:/g, "-");
             const filename = `subscriber_report_${formattedDate}_${formattedTime}_IST.pdf`;
-            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-            const link = document.createElement('a');
+            const url = window.URL.createObjectURL(
+              new Blob([response.data], { type: "application/pdf" })
+            );
+            const link = document.createElement("a");
             link.href = url;
-            link.setAttribute('download', filename);
+            link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
           })
           .catch((error) => {
-            console.error('Error downloading the PDF:', error);
-            alert('Failed to download the PDF. Please try again.');
+            console.error("Error downloading the PDF:", error);
+            alert("Failed to download the PDF. Please try again.");
           });
       });
     },

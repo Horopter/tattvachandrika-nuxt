@@ -47,7 +47,7 @@
         Sri Jagadguru Sriman Madhvacharya Moola Maha Samsthanam
       </h2>
       <h3 class="text-xl">Sri Rajendratirthiya Poorvadi Matha</h3>
-      <h3 class="font-bold text-2xl">Sri Vyasaraja Mutt (Sosale)</h3>
+      <h3 class="font-bold text-2xl">Sri Vyasaraaja Matha (Sosale)</h3>
     </section>
 
     <!-- Main content -->

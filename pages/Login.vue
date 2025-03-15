@@ -38,7 +38,7 @@
     <main class="container mx-auto mt-6 p-6">
       <div class="bg-white rounded-lg shadow-lg p-6 mt-4">
         <h2 class="text-3xl font-bold text-center mb-4 text-orange-800">
-          Welcome to Sri Tatwa Chandrika
+          Welcome to Tattva Chandrika Login and Signup 
         </h2>
 
         <div class="tabs mb-6">

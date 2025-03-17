@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      API_ENV: process.env.NUXT_PUBLIC_API_ENV || 'localhost',
+      API_ENV: process.env.NUXT_PUBLIC_API_ENV || 'heroku',
     },
   },
   vite: {

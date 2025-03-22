@@ -364,12 +364,14 @@ import ConfirmationModal from "./ConfirmationModal.vue";
 import magazineSubscriberService from "../services/magazineSubscriberService";
 import Loader from "~/components/Loader.vue";
 import loadingMixin from "~/mixins/loadingMixin.js";
+import ToastNotification from "./ToastNotification.vue";
 
 export default {
   components: {
     AddEditSubscriberModal,
     ConfirmationModal,
-    Loader
+    Loader,
+    ToastNotification
   },
   mixins: [loadingMixin],
   data() {
@@ -466,9 +468,10 @@ export default {
             .then(() => {
               this.loadSubscribers();
               this.showAddEditSubscriberModal = false;
+              this.$refs.toast.showToast("Subscriber updated successfully!", "Success", "success");
             })
             .catch((error) => {
-              alert("There was an error updating the subscriber!");
+              this.$refs.toast.showToast("Error updating subscriber", "Error", "error");
               console.error("There was an error updating the subscriber!", error);
             })
         );
@@ -478,7 +481,9 @@ export default {
             .then(() => {
               this.loadSubscribers();
               this.showAddEditSubscriberModal = false;
-              alert("User added successfully!");
+              this.activeTab = "active";
+              this.activeSubTab = "renewal";
+              this.$refs.toast.showToast("Subscriber added successfully!", "Success", "success");
             })
             .catch((error) => {
               if (error.response && error.response.data) {
@@ -491,12 +496,12 @@ export default {
                   }
                 });
                 if (errorMessages.length > 0) {
-                  alert(errorMessages.join("\n"));
+                  this.$refs.toast.showToast(errorMessages.join("\n"), "Error", "error");
                 } else {
-                  alert("There was an error adding the subscriber!");
+                  this.$refs.toast.showToast("Error adding subscriber", "Error", "error");
                 }
               } else {
-                alert("Something went wrong! Unable to add the subscriber.");
+                this.$refs.toast.showToast("Something went wrong! Unable to add subscriber", "Error", "error");
                 console.error("Unknown API Error:", error);
               }
             })
@@ -517,8 +522,10 @@ export default {
             .then(() => {
               this.loadSubscribers();
               this.hideDeleteModal();
+              this.$refs.toast.showToast("Subscriber deleted successfully!", "Success", "success");
             })
             .catch((error) => {
+              this.$refs.toast.showToast("Error deleting subscriber", "Error", "error");
               console.error("There was an error deleting the subscriber!", error);
             })
         );
@@ -529,8 +536,10 @@ export default {
         magazineSubscriberService.activateMagazineSubscriber(subscriberId)
           .then(() => {
             this.loadSubscribers();
+            this.$refs.toast.showToast("Subscriber activated successfully!", "Success", "success");
           })
           .catch((error) => {
+            this.$refs.toast.showToast("Error activating subscriber", "Error", "error");
             console.error("There was an error activating the subscriber!", error);
           })
       );
@@ -552,8 +561,12 @@ export default {
             this.inactiveSubscribers = response.data.filter(
               (subscriber) => subscriber.isDeleted
             );
+            if (response.data.length === 0) {
+              this.$refs.toast.showToast("No subscribers found matching your search", "Info", "info");
+            }
           })
           .catch((error) => {
+            this.$refs.toast.showToast("Error performing search", "Error", "error");
             console.error("There was an error performing search!", error);
           });
       });

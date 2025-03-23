@@ -430,11 +430,7 @@ export default defineComponent({
             this.subscriptionPlans = response.data;
           })
           .catch((error) => {
-            this.$refs.toast.showToast(
-              "Error retrieving subscription plans",
-              "Error",
-              "danger"
-            );
+            this.$refs.toast.showToast("Error loading subscription plans", "Error", "error");
             console.error("Error retrieving subscription plans:", error);
           })
       );
@@ -447,11 +443,7 @@ export default defineComponent({
             this.paymentModes = response.data;
           })
           .catch((error) => {
-            this.$refs.toast.showToast(
-              "Error retrieving payment modes",
-              "Error",
-              "danger"
-            );
+            this.$refs.toast.showToast("Error loading payment modes", "Error", "error");
             console.error("Error retrieving payment modes:", error);
           })
       );
@@ -464,11 +456,7 @@ export default defineComponent({
             this.categories = response.data;
           })
           .catch((error) => {
-            this.$refs.toast.showToast(
-              "Error retrieving categories",
-              "Error",
-              "danger"
-            );
+            this.$refs.toast.showToast("Error loading categories", "Error", "error");
             console.error("Error retrieving categories:", error);
           })
       );
@@ -481,11 +469,7 @@ export default defineComponent({
             this.types = response.data;
           })
           .catch((error) => {
-            this.$refs.toast.showToast(
-              "Error retrieving types",
-              "Error",
-              "danger"
-            );
+            this.$refs.toast.showToast("Error loading subscriber types", "Error", "error");
             console.error("Error retrieving types:", error);
           })
       );
@@ -524,8 +508,10 @@ export default defineComponent({
             .then(() => {
               this.loadSubscriptions(this.subscriber._id);
               this.showAddEditSubscriptionModal = false;
+              this.$refs.toast.showToast("Subscription updated successfully", "Success", "success");
             })
             .catch((error) => {
+              this.$refs.toast.showToast("Error updating subscription", "Error", "error");
               console.error("Error updating subscription:", error);
             })
         );
@@ -536,8 +522,10 @@ export default defineComponent({
             .then(() => {
               this.loadSubscriptions(this.subscriber._id);
               this.showAddEditSubscriptionModal = false;
+              this.$refs.toast.showToast("Subscription created successfully", "Success", "success");
             })
             .catch((error) => {
+              this.$refs.toast.showToast("Error creating subscription", "Error", "error");
               console.error("Error creating subscription:", error);
             })
         );

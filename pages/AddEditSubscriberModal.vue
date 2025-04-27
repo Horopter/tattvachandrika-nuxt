@@ -55,7 +55,6 @@
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="registration_number"
               v-model="localSubscriber.registration_number"
-              required
             />
           </div>
 
@@ -124,7 +123,6 @@
               id="email"
               v-model="localSubscriber.email"
               pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-              required
               title="Enter a valid email address (e.g., user@example.com)."
             />
             <p v-if="emailError" class="text-red-500 text-sm">{{ emailError }}</p>

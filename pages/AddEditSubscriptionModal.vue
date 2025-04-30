@@ -111,6 +111,21 @@
               </option>
             </select>
           </div>
+          <!-- Payment ID -->
+          <div class="mb-4">
+            <label
+              for="payment_id"
+              class="block text-sm font-medium text-gray-700"
+              >Payment ID</label
+            >
+            <input
+              id="payment_id"
+              v-model="localSubscription.payment_id"
+              type="text"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
+              placeholder="Enter payment ID"
+            />
+          </div>
           <!-- Payment Date -->
           <div class="mb-4">
             <label

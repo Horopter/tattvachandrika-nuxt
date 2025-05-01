@@ -401,13 +401,18 @@ export default {
       return this.runWithLoader(() => {
         return magazineSubscriberService.getMagazineSubscribers()
           .then((response) => {
-            this.currentSubscribers = response.data.filter(
+            // Sort all subscribers by _id in descending order
+            const sortedSubscribers = response.data.sort((a, b) => {
+              return b._id.localeCompare(a._id);
+            });
+
+            this.currentSubscribers = sortedSubscribers.filter(
               (subscriber) => !subscriber.isDeleted && subscriber.hasActiveSubscriptions
             );
-            this.waitingForRenewalSubscribers = response.data.filter(
+            this.waitingForRenewalSubscribers = sortedSubscribers.filter(
               (subscriber) => !subscriber.isDeleted && !subscriber.hasActiveSubscriptions
             );
-            this.inactiveSubscribers = response.data.filter(
+            this.inactiveSubscribers = sortedSubscribers.filter(
               (subscriber) => subscriber.isDeleted
             );
           })

@@ -254,12 +254,6 @@
                 >
                   Edit
                 </button>
-                <button
-                  class="bg-green-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  @click="activateSubscriber(subscriber._id)"
-                >
-                  Activate
-                </button>
               </td>
             </tr>
           </tbody>

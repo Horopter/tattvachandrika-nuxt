@@ -254,6 +254,17 @@ export default {
           : dayjs().format("YYYY-MM-DD"),
       };
     },
+    'localSubscription.payment_mode': {
+      handler(newVal) {
+        const selectedMode = this.paymentModes.find(mode => mode._id === newVal);
+        if (selectedMode && selectedMode.name.toLowerCase() === 'cash') {
+          this.localSubscription.payment_id = 'NA';
+        } else if (this.localSubscription.payment_id === 'NA') {
+          this.localSubscription.payment_id = '';
+        }
+      },
+      immediate: true
+    }
   },
   created() {
     // Ensure the date fields are in ISO format for Flatpickr.

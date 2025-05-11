@@ -47,9 +47,9 @@
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
-              <div class="flex items-center">
-                <span class="text-gray-500 w-24">Address:</span>
-                <span class="text-gray-800 font-medium">
+              <div class="flex items-start">
+                <span class="text-gray-500 w-24 flex-shrink-0">Address:</span>
+                <span class="text-gray-800 font-medium break-words">
                   {{ subscriber.address }}
                 </span>
               </div>

@@ -345,8 +345,6 @@ export default {
         params.filter = this.searchFilter;
         params.query = this.searchQuery.trim();
         params.page = page; // use generic 'page' param for search
-      } else {
-        // Otherwise, add filter params for subscriberStatus and activeSubTab
         params.subscriberStatus =
           this.activeTab === "active" ? "active" : "inactive";
 
@@ -436,10 +434,7 @@ export default {
         (this.activeTab === "inactive" && newPage > this.inactivePageTotalPages)
       )
         return;
-      if (this.searchQuery.trim())
-        this.performSearch();
-      else
-        this.loadSubscribers(newPage);
+      this.loadSubscribers(newPage);
     },
     switchTab(tab) {
       this.activeTab = tab;
@@ -609,71 +604,7 @@ export default {
     },
     performSearch() {
       this.resetPagination();
-
-      // If no search query is entered, show a warning
-      if (!this.searchQuery.trim()) {
-        this.$refs.toast.showToast(
-          "Please enter a search term",
-          "Warning",
-          "warning"
-        );
-        return Promise.resolve();
-      }
-
-      // Prepare the search parameters
-      const params = {
-        filter: this.searchFilter, // Field to search in (e.g., name, email)
-        query: this.searchQuery.trim(), // The search query itself
-        page: this.currentPage, // Current page number for pagination
-        page_size: this.pageSize, // Results per page
-        activeTab: this.activeTab, // Current tab (active, inactive, etc.)
-        activeSubTab: this.activeSubTab, // Current subtab (current, renewal)
-      };
-
-      // Call the search API
-      return magazineSubscriberService
-        .searchMagazineSubscribers(params)
-        .then((response) => {
-          // Get the results and total count from the response
-          const subscribers = response.data.results || [];
-          const totalCount = response.data.count || 0;
-
-          // Calculate the total number of pages based on the total count
-          this.totalPages = Math.ceil(totalCount / this.pageSize);
-
-          // Update the subscriber lists based on the active tab and subtab
-          if (this.activeTab === "active") {
-            if (this.activeSubTab === "current") {
-              this.currentSubscribers = subscribers; // All active (current) subscribers
-              this.waitingForRenewalSubscribers = [];
-            } else {
-              this.waitingForRenewalSubscribers = subscribers; // All renewal subscribers
-              this.currentSubscribers = [];
-            }
-            this.inactiveSubscribers = [];
-          } else if (this.activeTab === "inactive") {
-            this.inactiveSubscribers = subscribers; // All inactive subscribers
-            this.currentSubscribers = [];
-            this.waitingForRenewalSubscribers = [];
-          }
-
-          // If no results were found, show an info message
-          if (subscribers.length === 0) {
-            this.$refs.toast.showToast(
-              "No subscribers found matching your search",
-              "Info",
-              "info"
-            );
-          }
-        })
-        .catch((error) => {
-          this.$refs.toast.showToast(
-            "Error performing search",
-            "Error",
-            "error"
-          );
-          console.error("There was an error performing search!", error);
-        });
+      this.loadSubscribers(1);
     },
     resetSearch() {
       this.searchQuery = "";

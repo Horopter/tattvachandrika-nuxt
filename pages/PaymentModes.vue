@@ -24,36 +24,47 @@
       <table class="min-w-full bg-white divide-y divide-gray-200">
         <thead class="bg-gradient-to-r from-gray-100 to-gray-200">
           <tr>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Name
-            </th>
-            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Actions
-            </th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="mode in paymentModes"
-            :key="mode._id || mode.tempId"
-            class="hover:bg-gray-100 transition duration-200"
-          >
+          <tr v-if="addingNew" class="bg-gray-50">
             <td class="px-6 py-4">
               <input
-                v-if="editModeId === mode._id || editModeId === mode.tempId"
                 type="text"
-                v-model="mode.name"
+                v-model="newPaymentMode.name"
                 class="border border-gray-300 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-300 w-full"
+                placeholder="New Payment Mode Name"
               />
-              <span
-                v-else
-                class="px-6 py-4 text-md font-semibold text-gray-700 font-sans"
-              >
-                {{ mode.name }}
-              </span>
             </td>
-            <td class="px-6 py-4 space-x-3">
-              <template v-if="editModeId === mode._id || editModeId === mode.tempId">
+            <td class="px-6 py-4">
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2 transition-all"
+                @click="saveNewPaymentMode"
+              >
+                Save
+              </button>
+              <button
+                class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+                @click="cancelNewPaymentMode"
+              >
+                Cancel
+              </button>
+            </td>
+          </tr>
+
+          <!-- Existing Payment Modes Rows -->
+          <tr v-for="mode in paymentModes" :key="mode._id || mode.tempId" class="hover:bg-gray-100 transition duration-200">
+            <template v-if="editModeId === mode._id || editModeId === mode.tempId">
+              <td class="px-6 py-4">
+                <input
+                  type="text"
+                  v-model="mode.name"
+                  class="border border-gray-300 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-300 w-full"
+                />
+              </td>
+              <td class="px-6 py-4">
                 <button
                   class="bg-green-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
                   @click="saveMode(mode)"
@@ -62,12 +73,17 @@
                 </button>
                 <button
                   class="bg-gray-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                  @click="cancelEdit()"
+                  @click="cancelEdit"
                 >
                   Cancel
                 </button>
-              </template>
-              <template v-else>
+              </td>
+            </template>
+            <template v-else>
+              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">
+                {{ mode.name }}
+              </td>
+              <td class="px-6 py-4">
                 <button
                   class="bg-yellow-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   @click="editMode(mode._id || mode.tempId)"
@@ -75,24 +91,24 @@
                   Edit
                 </button>
                 <button
-                  class="bg-red-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  class="bg-red-600 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                   @click="confirmDeleteMode(mode._id || mode.tempId)"
                 >
                   Delete
                 </button>
-              </template>
-            </td>
+              </td>
+            </template>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Add New Payemnt Mode Button -->
+    <!-- Add New Payment Mode Button -->
     <button
       class="mt-6 bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-      @click="addMode"
+      @click="startAddingNew"
     >
-      Add Payment Mode
+      Add New Payment Mode
     </button>
 
     <!-- Confirmation Modal -->
@@ -122,9 +138,13 @@ export default {
   data() {
     return {
       paymentModes: [],
+      addingNew: false,
       editModeId: null,
       showConfirmationModal: false,
       modeToDelete: null,
+      newPaymentMode: {
+        name: "",
+      },
     };
   },
   created() {
@@ -143,20 +163,33 @@ export default {
           });
       });
     },
-    addMode() {
-      // Create a temporary mode object with a temporary id.
-      const newMode = {
-        tempId: Date.now(), // Temporary id; backend will assign _id upon saving.
-        name: "",
-      };
-      this.paymentModes.unshift(newMode);
-      this.editModeId = newMode.tempId;
+    startAddingNew() {
+      this.addingNew = true;
+      this.resetNewPaymentMode();
+    },
+    cancelNewPaymentMode() {
+      this.addingNew = false;
+    },
+    resetNewPaymentMode() {
+      this.newPaymentMode = { name: "" };
+    },
+    saveNewPaymentMode() {
+      return this.runWithLoader(() => {
+        return paymentModeService
+          .createPaymentMode(this.newPaymentMode)
+          .then(() => {
+            this.loadPaymentModes();
+            this.addingNew = false;
+          })
+          .catch((error) => {
+            console.error("There was an error saving the payment mode!", error);
+          });
+      });
     },
     editMode(modeId) {
       this.editModeId = modeId;
     },
     cancelEdit() {
-      // Cancel edit mode and clear editModeId
       this.editModeId = null;
     },
     saveMode(mode) {
@@ -211,5 +244,5 @@ export default {
 </script>
 
 <style scoped>
-/* No need to declare loader styles here if they're handled by Loader.vue */
+/* Add any necessary styles for the payment mode management */
 </style>

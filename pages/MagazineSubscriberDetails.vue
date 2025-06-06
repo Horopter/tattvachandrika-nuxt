@@ -195,7 +195,10 @@
                   Status
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment
+                  Payment Mode
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Payment Id
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
@@ -231,6 +234,9 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
                   {{ getPaymentModeName(subscription.payment_mode) }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  {{ subscription.payment_id) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
                   {{ formatDate(subscription.payment_date) }}
@@ -302,6 +308,9 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
                   {{ getPaymentModeName(subscription.payment_mode) }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">
+                  {{ subscription.payment_id) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
                   {{ formatDate(subscription.payment_date) }}

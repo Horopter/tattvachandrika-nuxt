@@ -19,14 +19,6 @@
     <!-- Header Section -->
     <h2 class="text-3xl font-semibold text-gray-800 mb-6">Payment Modes</h2>
 
-    <!-- Add Payment Mode Button -->
-    <button
-      class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-full shadow-lg hover:from-purple-600 hover:to-blue-500 transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-400 mb-6"
-      @click="addMode"
-    >
-      Add Payment Mode
-    </button>
-
     <!-- Payment Modes Table -->
     <div class="overflow-hidden rounded-lg shadow-lg bg-white">
       <table class="min-w-full bg-white divide-y divide-gray-200">
@@ -61,40 +53,47 @@
               </span>
             </td>
             <td class="px-6 py-4 space-x-3">
-  <template v-if="editModeId === mode._id || editModeId === mode.tempId">
-    <button
-      class="bg-green-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-      @click="saveMode(mode)"
-    >
-      Save
-    </button>
-    <button
-      class="bg-gray-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
-      @click="cancelEdit()"
-    >
-      Cancel
-    </button>
-  </template>
-  <template v-else>
-    <button
-      class="bg-yellow-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-      @click="editMode(mode._id || mode.tempId)"
-    >
-      Edit
-    </button>
-    <button
-      class="bg-red-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-      @click="confirmDeleteMode(mode._id || mode.tempId)"
-    >
-      Delete
-    </button>
-  </template>
-</td>
-
+              <template v-if="editModeId === mode._id || editModeId === mode.tempId">
+                <button
+                  class="bg-green-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  @click="saveMode(mode)"
+                >
+                  Save
+                </button>
+                <button
+                  class="bg-gray-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  @click="cancelEdit()"
+                >
+                  Cancel
+                </button>
+              </template>
+              <template v-else>
+                <button
+                  class="bg-yellow-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  @click="editMode(mode._id || mode.tempId)"
+                >
+                  Edit
+                </button>
+                <button
+                  class="bg-red-500 text-white px-4 py-2 rounded-md text-xs shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  @click="confirmDeleteMode(mode._id || mode.tempId)"
+                >
+                  Delete
+                </button>
+              </template>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Add New Payemnt Mode Button -->
+    <button
+      class="mt-6 bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
+      @click="addMode"
+    >
+      Add Payment Mode
+    </button>
 
     <!-- Confirmation Modal -->
     <confirmation-modal
@@ -157,6 +156,7 @@ export default {
       this.editModeId = modeId;
     },
     cancelEdit() {
+      // Cancel edit mode and clear editModeId
       this.editModeId = null;
     },
     saveMode(mode) {

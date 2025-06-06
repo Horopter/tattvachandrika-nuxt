@@ -244,6 +244,7 @@
 </template>
 
 <script>
+import { useRouter } from "vue-router"; // Import here
 import AddEditSubscriberModal from "./AddEditSubscriberModal.vue";
 import ConfirmationModal from "./ConfirmationModal.vue";
 import magazineSubscriberService from "../services/magazineSubscriberService";
@@ -301,6 +302,22 @@ export default {
       }
     },
   },
+
+  setup() {
+    const router = useRouter();
+
+    function viewSubscriber(subscriberId) {
+      console.log("Viewing subscriber:", subscriberId); // debug log
+      if (!subscriberId) {
+        console.error("No subscriber ID provided!");
+        return;
+      }
+      router.push({ path: "/magazineSubscriberDetails", query: { id: subscriberId } });
+    }
+
+    return { viewSubscriber };
+  },
+
   methods: {
     resetPagination() {
       this.currentPage = 1;
@@ -319,7 +336,6 @@ export default {
         params.filter = this.searchFilter;
         params.query = this.searchQuery.trim();
       } else {
-        // Filter subscribers by active/inactive and sub-tab status on backend if supported
         params.subscriberStatus =
           this.activeTab === "active" ? "active" : "inactive";
 
@@ -335,12 +351,10 @@ export default {
             const subscribers = response.data.results || [];
             const totalCount = response.data.count || 0;
 
-            // Sort descending by _id (newest first)
             const sortedSubscribers = subscribers.sort((a, b) =>
               b._id.localeCompare(a._id)
             );
 
-            // Filter client-side based on tab & sub-tab (if backend does not support these filters)
             if (this.activeTab === "active") {
               if (this.activeSubTab === "current") {
                 this.currentSubscribers = sortedSubscribers.filter(
@@ -574,7 +588,6 @@ export default {
 
             this.totalPages = Math.ceil(totalCount / this.pageSize);
 
-            // Filter client-side as before
             if (this.activeTab === "active") {
               if (this.activeSubTab === "current") {
                 this.currentSubscribers = subscribers.filter(
@@ -619,16 +632,6 @@ export default {
       this.activeSubTab = "current";
       this.resetPagination();
       this.loadSubscribers();
-    },
-    viewSubscriber(subscriberId) {
-      console.log("Viewing subscriber:", subscriberId); // Add this debug line
-      if (!subscriberId) {
-        console.error("No subscriber ID provided!");
-        return;
-      }
-      this.$router.push({
-        path: `/magazineSubscriberDetails?id=${subscriberId}`,
-      });
     },
   },
 };

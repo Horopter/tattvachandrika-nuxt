@@ -436,7 +436,10 @@ export default {
         (this.activeTab === "inactive" && newPage > this.inactivePageTotalPages)
       )
         return;
-      this.loadSubscribers(newPage);
+      if (this.searchQuery.trim())
+        this.performSearch();
+      else
+        this.loadSubscribers(newPage);
     },
     switchTab(tab) {
       this.activeTab = tab;

@@ -7,13 +7,14 @@
     <nav aria-label="breadcrumb" class="mb-6">
       <ol class="flex space-x-2 text-gray-700">
         <li>
-          <router-link to="/HomePage" class="text-blue-600 hover:text-blue-800 font-semibold">
+          <router-link
+            to="/HomePage"
+            class="text-blue-600 hover:text-blue-800 font-semibold"
+          >
             Home
           </router-link>
         </li>
-        <li>
-          <span>/</span>
-        </li>
+        <li><span>/</span></li>
         <li class="text-gray-500 font-semibold" aria-current="page">
           Magazine Subscribers
         </li>
@@ -22,9 +23,7 @@
 
     <!-- Heading & Add Subscriber Button -->
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-3xl font-bold text-gray-800">
-        Magazine Subscribers
-      </h2>
+      <h2 class="text-3xl font-bold text-gray-800">Magazine Subscribers</h2>
       <button
         class="bg-gradient-to-r text-lg from-blue-500 to-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-gradient-to-l transition duration-200"
         @click="openAddSubscriberModal"
@@ -35,8 +34,9 @@
 
     <!-- Search & Filter Section -->
     <div class="mb-8 bg-white shadow-lg rounded-lg p-6">
-      <div class="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
-        <!-- Filter Dropdown -->
+      <div
+        class="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0"
+      >
         <div>
           <select
             v-model="searchFilter"
@@ -49,7 +49,6 @@
           </select>
         </div>
 
-        <!-- Search Input Field -->
         <div class="relative flex-grow">
           <input
             type="text"
@@ -57,8 +56,14 @@
             placeholder="Search Subscribers..."
             class="w-full border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500 text-gray-800"
           />
-          <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-            <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <div
+            class="absolute inset-y-0 right-4 flex items-center pointer-events-none"
+          >
+            <svg
+              class="w-5 h-5 text-gray-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 fill-rule="evenodd"
                 d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zm-5.9.68a6 6 0 100-12 6 6 0 000 12z"
@@ -68,7 +73,6 @@
           </div>
         </div>
 
-        <!-- Search & Reset Buttons -->
         <div>
           <button
             class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-200"
@@ -89,242 +93,129 @@
     </div>
 
     <!-- Primary Tabs: Active / Inactive -->
-    <div class="flex gap-2 md:gap-4 items-center bg-gray-50 p-3 rounded-md mb-4 border border-gray-200">
+    <div
+      class="flex gap-2 md:gap-4 items-center bg-gray-50 p-3 rounded-md mb-4 border border-gray-200"
+    >
       <button
         class="px-6 py-2 font-semibold rounded transition-colors duration-200"
-        :class="activeTab === 'active'
-          ? 'bg-white text-blue-600 shadow border border-gray-200'
-          : 'text-gray-600 hover:text-blue-600'"
-        @click="activeTab = 'active'"
+        :class="
+          activeTab === 'active'
+            ? 'bg-white text-blue-600 shadow border border-gray-200'
+            : 'text-gray-600 hover:text-blue-600'
+        "
+        @click="switchTab('active')"
       >
         Active Subscribers
       </button>
       <button
         class="px-6 py-2 font-semibold rounded transition-colors duration-200"
-        :class="activeTab === 'inactive'
-          ? 'bg-white text-blue-600 shadow border border-gray-200'
-          : 'text-gray-600 hover:text-blue-600'"
-        @click="activeTab = 'inactive'"
+        :class="
+          activeTab === 'inactive'
+            ? 'bg-white text-blue-600 shadow border border-gray-200'
+            : 'text-gray-600 hover:text-blue-600'
+        "
+        @click="switchTab('inactive')"
       >
         Inactive Subscribers
       </button>
     </div>
 
     <!-- Active Subscribers Section -->
-    <div v-show="activeTab === 'active'">
-      <!-- Sub-Tabs for 'Current' vs 'Waiting for Renewal' -->
+    <div v-show="activeTab === 'active'" class="relative">
+      <!-- Loader overlay when loading -->
+      <Loader
+        v-if="isLoading"
+        class="absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10"
+      />
+
+      <!-- Sub-Tabs -->
       <div class="flex gap-2 mb-4">
         <button
           class="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 transition-colors duration-200"
-          :class="activeSubTab === 'current'
-            ? 'bg-blue-500 text-white'
-            : 'bg-white text-gray-600 hover:bg-blue-50'"
-          @click="activeSubTab = 'current'"
+          :class="
+            activeSubTab === 'current'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-600 hover:bg-blue-50'
+          "
+          @click="switchSubTab('current')"
+          :disabled="isLoading"
         >
           Current Subscribers
         </button>
         <button
           class="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 transition-colors duration-200"
-          :class="activeSubTab === 'renewal'
-            ? 'bg-blue-500 text-white'
-            : 'bg-white text-gray-600 hover:bg-blue-50'"
-          @click="activeSubTab = 'renewal'"
+          :class="
+            activeSubTab === 'renewal'
+              ? 'bg-blue-500 text-white'
+              : 'bg-white text-gray-600 hover:bg-blue-50'
+          "
+          @click="switchSubTab('renewal')"
+          :disabled="isLoading"
         >
           Waiting for Renewal
         </button>
       </div>
 
       <!-- Current Subscribers Table -->
-      <div v-show="activeSubTab === 'current'">
-        <table class="min-w-full bg-white divide-y divide-gray-300 shadow-md rounded-lg overflow-hidden">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Registration Number
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Name
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                City/Town
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                State
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Phone
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Email
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="subscriber in currentSubscribers"
-              :key="subscriber._id"
-              class="hover:bg-gray-50 transition duration-200"
-            >
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.registration_number }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.name }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.city_town }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.state }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.phone }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.email }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800 flex space-x-2">
-                <nuxt-link :to="`/magazineSubscriberDetails?id=${subscriber._id}`">
-                  <button
-                    class="bg-blue-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    View
-                  </button>
-                </nuxt-link>
-                <button
-                  class="bg-gray-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-gray-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                  @click="openEditSubscriberModal(subscriber)"
-                >
-                  Edit
-                </button>
-                <button
-                  class="bg-red-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-orange-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  @click="confirmDeleteSubscriber(subscriber._id)"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-show="activeSubTab === 'current'" class="relative">
+        <subscriber-table
+          :subscribers="currentSubscribers"
+          :loading="isLoading"
+          :show-delete="true"
+          :show-activate="false"
+          @view="viewSubscriber"
+          @edit="openEditSubscriberModal"
+          @delete="confirmDeleteSubscriber"
+        />
+        <pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @page-changed="changePage"
+          :disabled="isLoading"
+        />
       </div>
 
       <!-- Waiting for Renewal Table -->
-      <div v-show="activeSubTab === 'renewal'">
-        <table class="min-w-full bg-white divide-y divide-gray-300 shadow-md rounded-lg overflow-hidden">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Registration Number
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Name
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                City/Town
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                State
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Phone
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Email
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="subscriber in waitingForRenewalSubscribers"
-              :key="subscriber._id"
-              class="hover:bg-gray-50 transition duration-200"
-            >
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.registration_number }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.name }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.city_town }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.state }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.phone }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.email }}</td>
-              <td class="px-6 py-4 text-sm text-gray-800 flex space-x-2">
-                <nuxt-link :to="`/magazineSubscriberDetails?id=${subscriber._id}`">
-                  <button
-                    class="bg-blue-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    View
-                  </button>
-                </nuxt-link>
-                <button
-                  class="bg-gray-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-gray-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                  @click="openEditSubscriberModal(subscriber)"
-                >
-                  Edit
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-show="activeSubTab === 'renewal'" class="relative">
+        <subscriber-table
+          :subscribers="waitingForRenewalSubscribers"
+          :loading="isLoading"
+          :show-delete="false"
+          :show-activate="false"
+          @view="viewSubscriber"
+          @edit="openEditSubscriberModal"
+        />
+        <pagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @page-changed="changePage"
+          :disabled="isLoading"
+        />
       </div>
     </div>
 
     <!-- Inactive Subscribers Section -->
-    <div v-show="activeTab === 'inactive'">
-      <table class="min-w-full bg-white divide-y divide-gray-300 shadow-md rounded-lg overflow-hidden">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Registration Number
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Name
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              City/Town
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              State
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Phone
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Email
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr
-            v-for="subscriber in inactiveSubscribers"
-            :key="subscriber._id"
-            class="hover:bg-gray-50 transition duration-200"
-          >
-            <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.registration_number }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.name }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.city_town }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.state }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.phone }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800">{{ subscriber.email }}</td>
-            <td class="px-6 py-4 text-sm text-gray-800 flex space-x-2">
-              <nuxt-link :to="`/magazineSubscriberDetails?id=${subscriber._id}`">
-                <button
-                  class="bg-blue-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  View
-                </button>
-              </nuxt-link>
-              <button
-                class="bg-gray-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-gray-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                @click="openEditSubscriberModal(subscriber)"
-              >
-                Edit
-              </button>
-              <button
-                class="bg-green-600 text-white px-4 py-1 rounded-md text-xs shadow-sm hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
-                @click="activateSubscriber(subscriber._id)"
-              >
-                Activate
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-show="activeTab === 'inactive'" class="relative">
+      <Loader
+        v-if="isLoading"
+        class="absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-10"
+      />
+
+      <subscriber-table
+        :subscribers="inactiveSubscribers"
+        :loading="isLoading"
+        :show-delete="false"
+        :show-activate="true"
+        @view="viewSubscriber"
+        @edit="openEditSubscriberModal"
+        @activate="activateSubscriber"
+      />
+      <pagination
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @page-changed="changePage"
+        :disabled="isLoading"
+      />
     </div>
 
     <!-- Add/Edit Subscriber Modal -->
@@ -336,7 +227,7 @@
       @close="closeAddEditSubscriberModal"
       @save="saveSubscriber"
     />
-    
+
     <!-- Confirmation Modal -->
     <confirmation-modal
       v-if="showConfirmationModal"
@@ -346,7 +237,7 @@
       @close="hideDeleteModal"
       @confirm="deleteSubscriber"
     />
-    
+
     <!-- Toast Notification -->
     <toast-notification ref="toast" />
   </div>
@@ -359,13 +250,17 @@ import magazineSubscriberService from "../services/magazineSubscriberService";
 import Loader from "~/components/Loader.vue";
 import loadingMixin from "~/mixins/loadingMixin.js";
 import ToastNotification from "./ToastNotification.vue";
+import SubscriberTable from "./SubscriberTable.vue";
+import Pagination from "./Pagination.vue";
 
 export default {
   components: {
     AddEditSubscriberModal,
     ConfirmationModal,
     Loader,
-    ToastNotification
+    ToastNotification,
+    SubscriberTable,
+    Pagination,
   },
   mixins: [loadingMixin],
   data() {
@@ -382,60 +277,145 @@ export default {
       activeTab: "active",
       activeSubTab: "current",
       searchQuery: "",
-      searchFilter: "name"
+      searchFilter: "name",
+
+      currentPage: 1,
+      totalPages: 1,
+      pageSize: 10,
     };
   },
   created() {
-    this.loadSubscribers();
     this.loadCategories();
     this.loadTypes();
+    this.loadSubscribers();
+  },
+  watch: {
+    activeTab() {
+      this.resetPagination();
+      this.loadSubscribers();
+    },
+    activeSubTab() {
+      if (this.activeTab === "active") {
+        this.resetPagination();
+        this.loadSubscribers();
+      }
+    },
   },
   methods: {
-    loadSubscribers() {
-      return this.runWithLoader(() => {
-        return magazineSubscriberService.getMagazineSubscribers()
-          .then((response) => {
-            // Sort all subscribers by _id in descending order
-            const sortedSubscribers = response.data.sort((a, b) => {
-              return b._id.localeCompare(a._id);
-            });
+    resetPagination() {
+      this.currentPage = 1;
+      this.totalPages = 1;
+    },
+    loadSubscribers(page = 1) {
+      this.currentPage = page;
 
-            this.currentSubscribers = sortedSubscribers.filter(
-              (subscriber) => !subscriber.isDeleted && subscriber.hasActiveSubscriptions
+      let params = {
+        page,
+        page_size: this.pageSize,
+      };
+
+      // Search params take precedence
+      if (this.searchQuery.trim()) {
+        params.filter = this.searchFilter;
+        params.query = this.searchQuery.trim();
+      } else {
+        // Filter subscribers by active/inactive and sub-tab status on backend if supported
+        params.subscriberStatus =
+          this.activeTab === "active" ? "active" : "inactive";
+
+        if (this.activeTab === "active") {
+          params.activeSubTab = this.activeSubTab;
+        }
+      }
+
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .getMagazineSubscribers(params)
+          .then((response) => {
+            const subscribers = response.data.results || [];
+            const totalCount = response.data.count || 0;
+
+            // Sort descending by _id (newest first)
+            const sortedSubscribers = subscribers.sort((a, b) =>
+              b._id.localeCompare(a._id)
             );
-            this.waitingForRenewalSubscribers = sortedSubscribers.filter(
-              (subscriber) => !subscriber.isDeleted && !subscriber.hasActiveSubscriptions
-            );
-            this.inactiveSubscribers = sortedSubscribers.filter(
-              (subscriber) => subscriber.isDeleted
-            );
+
+            // Filter client-side based on tab & sub-tab (if backend does not support these filters)
+            if (this.activeTab === "active") {
+              if (this.activeSubTab === "current") {
+                this.currentSubscribers = sortedSubscribers.filter(
+                  (s) => !s.isDeleted && s.hasActiveSubscriptions
+                );
+                this.waitingForRenewalSubscribers = [];
+              } else {
+                this.waitingForRenewalSubscribers = sortedSubscribers.filter(
+                  (s) => !s.isDeleted && !s.hasActiveSubscriptions
+                );
+                this.currentSubscribers = [];
+              }
+              this.inactiveSubscribers = [];
+            } else {
+              this.inactiveSubscribers = sortedSubscribers.filter(
+                (s) => s.isDeleted
+              );
+              this.currentSubscribers = [];
+              this.waitingForRenewalSubscribers = [];
+            }
+
+            this.totalPages = Math.ceil(totalCount / this.pageSize);
           })
           .catch((error) => {
-            console.error("There was an error retrieving the subscribers!", error);
-          });
-      });
+            this.$refs.toast.showToast(
+              "Error loading subscribers",
+              "Error",
+              "error"
+            );
+            console.error(
+              "There was an error retrieving the subscribers!",
+              error
+            );
+          })
+      );
+    },
+    changePage(newPage) {
+      if (newPage < 1 || newPage > this.totalPages) return;
+      this.loadSubscribers(newPage);
+    },
+    switchTab(tab) {
+      this.activeTab = tab;
+      this.activeSubTab = "current";
+    },
+    switchSubTab(subTab) {
+      this.activeSubTab = subTab;
     },
     loadCategories() {
-      return this.runWithLoader(() => {
-        return magazineSubscriberService.getCategories()
-          .then((response) => {
-            this.categories = response.data;
-          })
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .getCategories()
+          .then((response) => (this.categories = response.data))
           .catch((error) => {
-            console.error("There was an error retrieving the categories!", error);
-          });
-      });
+            this.$refs.toast.showToast(
+              "Error loading categories",
+              "Error",
+              "error"
+            );
+            console.error(
+              "There was an error retrieving the categories!",
+              error
+            );
+          })
+      );
     },
     loadTypes() {
-      return this.runWithLoader(() => {
-        return magazineSubscriberService.getTypes()
-          .then((response) => {
-            this.types = response.data;
-          })
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .getTypes()
+          .then((response) => (this.types = response.data))
           .catch((error) => {
+            this.$refs.toast.showToast("Error loading types", "Error", "error");
             console.error("There was an error retrieving the types!", error);
-          });
-      });
+          })
+      );
     },
     openAddSubscriberModal() {
       this.selectedSubscriber = {
@@ -449,7 +429,7 @@ export default {
         email: "",
         category: "",
         stype: "",
-        notes: ""
+        notes: "",
       };
       this.showAddEditSubscriberModal = true;
     },
@@ -461,51 +441,55 @@ export default {
       this.showAddEditSubscriberModal = false;
     },
     saveSubscriber(subscriber) {
-      if (subscriber._id) {
-        return this.runWithLoader(() =>
-          magazineSubscriberService.updateMagazineSubscriber(subscriber._id, subscriber)
-            .then(() => {
-              this.loadSubscribers();
-              this.showAddEditSubscriberModal = false;
-              this.$refs.toast.showToast("Subscriber updated successfully!", "Success", "success");
-            })
-            .catch((error) => {
-              this.$refs.toast.showToast("Error updating subscriber", "Error", "error");
-              console.error("There was an error updating the subscriber!", error);
-            })
-        );
-      } else {
-        return this.runWithLoader(() =>
-          magazineSubscriberService.createMagazineSubscriber(subscriber)
-            .then(() => {
-              this.loadSubscribers();
-              this.showAddEditSubscriberModal = false;
+      const isUpdate = Boolean(subscriber._id);
+      const action = isUpdate
+        ? magazineSubscriberService.updateMagazineSubscriber(
+            subscriber._id,
+            subscriber
+          )
+        : magazineSubscriberService.createMagazineSubscriber(subscriber);
+
+      return this.runWithLoader(() =>
+        action
+          .then(() => {
+            this.loadSubscribers();
+            this.showAddEditSubscriberModal = false;
+            this.$refs.toast.showToast(
+              `Subscriber ${isUpdate ? "updated" : "added"} successfully!`,
+              "Success",
+              "success"
+            );
+            if (!isUpdate) {
               this.activeTab = "active";
               this.activeSubTab = "renewal";
-              this.$refs.toast.showToast("Subscriber added successfully!", "Success", "success");
-            })
-            .catch((error) => {
-              if (error.response && error.response.data) {
-                const errorData = error.response.data;
-                console.error("API Error Response:", errorData);
-                let errorMessages = [];
-                Object.keys(errorData).forEach((field) => {
-                  if (Array.isArray(errorData[field])) {
-                    errorMessages.push(`${field.replace("_", " ")}: ${errorData[field][0]}`);
-                  }
-                });
-                if (errorMessages.length > 0) {
-                  this.$refs.toast.showToast(errorMessages.join("\n"), "Error", "error");
-                } else {
-                  this.$refs.toast.showToast("Error adding subscriber", "Error", "error");
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.data) {
+              const errorData = error.response.data;
+              let errorMessages = [];
+              Object.keys(errorData).forEach((field) => {
+                if (Array.isArray(errorData[field])) {
+                  errorMessages.push(
+                    `${field.replace("_", " ")}: ${errorData[field][0]}`
+                  );
                 }
-              } else {
-                this.$refs.toast.showToast("Something went wrong! Unable to add subscriber", "Error", "error");
-                console.error("Unknown API Error:", error);
-              }
-            })
-        );
-      }
+              });
+              this.$refs.toast.showToast(
+                errorMessages.join("\n"),
+                "Error",
+                "error"
+              );
+            } else {
+              this.$refs.toast.showToast(
+                "Something went wrong! Unable to save subscriber",
+                "Error",
+                "error"
+              );
+              console.error("Unknown API Error:", error);
+            }
+          })
+      );
     },
     confirmDeleteSubscriber(subscriberId) {
       this.subscriberToDelete = subscriberId;
@@ -515,57 +499,115 @@ export default {
       this.showConfirmationModal = false;
     },
     deleteSubscriber() {
-      if (this.subscriberToDelete) {
-        return this.runWithLoader(() =>
-          magazineSubscriberService.softDeleteMagazineSubscriber(this.subscriberToDelete)
-            .then(() => {
-              this.loadSubscribers();
-              this.hideDeleteModal();
-              this.$refs.toast.showToast("Subscriber deleted successfully!", "Success", "success");
-            })
-            .catch((error) => {
-              this.$refs.toast.showToast("Error deleting subscriber", "Error", "error");
-              console.error("There was an error deleting the subscriber!", error);
-            })
-        );
-      }
+      if (!this.subscriberToDelete) return;
+      return this.runWithLoader(() =>
+        magazineSubscriberService
+          .softDeleteMagazineSubscriber(this.subscriberToDelete)
+          .then(() => {
+            this.loadSubscribers();
+            this.hideDeleteModal();
+            this.$refs.toast.showToast(
+              "Subscriber deleted successfully!",
+              "Success",
+              "success"
+            );
+          })
+          .catch((error) => {
+            this.$refs.toast.showToast(
+              "Error deleting subscriber",
+              "Error",
+              "error"
+            );
+            console.error("There was an error deleting the subscriber!", error);
+          })
+      );
     },
     activateSubscriber(subscriberId) {
       return this.runWithLoader(() =>
-        magazineSubscriberService.activateMagazineSubscriber(subscriberId)
+        magazineSubscriberService
+          .activateMagazineSubscriber(subscriberId)
           .then(() => {
             this.loadSubscribers();
-            this.$refs.toast.showToast("Subscriber activated successfully!", "Success", "success");
+            this.$refs.toast.showToast(
+              "Subscriber activated successfully!",
+              "Success",
+              "success"
+            );
           })
           .catch((error) => {
-            this.$refs.toast.showToast("Error activating subscriber", "Error", "error");
-            console.error("There was an error activating the subscriber!", error);
+            this.$refs.toast.showToast(
+              "Error activating subscriber",
+              "Error",
+              "error"
+            );
+            console.error(
+              "There was an error activating the subscriber!",
+              error
+            );
           })
       );
     },
     performSearch() {
+      this.resetPagination();
       return this.runWithLoader(() => {
+        if (!this.searchQuery.trim()) {
+          this.$refs.toast.showToast(
+            "Please enter a search term",
+            "Warning",
+            "warning"
+          );
+          return Promise.resolve();
+        }
+
         const params = {
           filter: this.searchFilter,
-          query: this.searchQuery
+          query: this.searchQuery.trim(),
+          page: this.currentPage,
+          page_size: this.pageSize,
         };
-        return magazineSubscriberService.searchMagazineSubscribers(params)
+
+        return magazineSubscriberService
+          .searchMagazineSubscribers(params)
           .then((response) => {
-            this.currentSubscribers = response.data.filter(
-              (subscriber) => !subscriber.isDeleted && subscriber.hasActiveSubscriptions
-            );
-            this.waitingForRenewalSubscribers = response.data.filter(
-              (subscriber) => !subscriber.isDeleted && !subscriber.hasActiveSubscriptions
-            );
-            this.inactiveSubscribers = response.data.filter(
-              (subscriber) => subscriber.isDeleted
-            );
-            if (response.data.length === 0) {
-              this.$refs.toast.showToast("No subscribers found matching your search", "Info", "info");
+            const subscribers = response.data.results || [];
+            const totalCount = response.data.count || 0;
+
+            this.totalPages = Math.ceil(totalCount / this.pageSize);
+
+            // Filter client-side as before
+            if (this.activeTab === "active") {
+              if (this.activeSubTab === "current") {
+                this.currentSubscribers = subscribers.filter(
+                  (s) => !s.isDeleted && s.hasActiveSubscriptions
+                );
+                this.waitingForRenewalSubscribers = [];
+              } else {
+                this.waitingForRenewalSubscribers = subscribers.filter(
+                  (s) => !s.isDeleted && !s.hasActiveSubscriptions
+                );
+                this.currentSubscribers = [];
+              }
+              this.inactiveSubscribers = [];
+            } else {
+              this.inactiveSubscribers = subscribers.filter((s) => s.isDeleted);
+              this.currentSubscribers = [];
+              this.waitingForRenewalSubscribers = [];
+            }
+
+            if (subscribers.length === 0) {
+              this.$refs.toast.showToast(
+                "No subscribers found matching your search",
+                "Info",
+                "info"
+              );
             }
           })
           .catch((error) => {
-            this.$refs.toast.showToast("Error performing search", "Error", "error");
+            this.$refs.toast.showToast(
+              "Error performing search",
+              "Error",
+              "error"
+            );
             console.error("There was an error performing search!", error);
           });
       });
@@ -575,12 +617,15 @@ export default {
       this.searchFilter = "name";
       this.activeTab = "active";
       this.activeSubTab = "current";
+      this.resetPagination();
       this.loadSubscribers();
     },
     viewSubscriber(subscriberId) {
-      this.$router.push({ path: `/magazineSubscriberDetails?id=${subscriberId}` });
-    }
-  }
+      this.$router.push({
+        path: `/magazineSubscriberDetails?id=${subscriberId}`,
+      });
+    },
+  },
 };
 </script>
 

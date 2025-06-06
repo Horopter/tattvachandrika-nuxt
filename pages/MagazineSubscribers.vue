@@ -621,6 +621,11 @@ export default {
       this.loadSubscribers();
     },
     viewSubscriber(subscriberId) {
+      console.log("Viewing subscriber:", subscriberId); // Add this debug line
+      if (!subscriberId) {
+        console.error("No subscriber ID provided!");
+        return;
+      }
       this.$router.push({
         path: `/magazineSubscriberDetails?id=${subscriberId}`,
       });

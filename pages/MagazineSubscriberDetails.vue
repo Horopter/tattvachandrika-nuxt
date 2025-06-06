@@ -236,7 +236,7 @@
                   {{ getPaymentModeName(subscription.payment_mode) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
-                  {{ subscription.payment_id) }}
+                  {{ subscription.payment_id }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
                   {{ formatDate(subscription.payment_date) }}

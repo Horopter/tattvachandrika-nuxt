@@ -10,12 +10,13 @@ const getToken = () => {
   return null;
 };
 
-const getMagazineSubscribers = () => {
+const getMagazineSubscribers = (params = {}) => {
   const token = getToken();
   return axios.get(apiUrl, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    params,  // pass params here for filters, pagination, etc.
   });
 };
 
@@ -101,5 +102,5 @@ export default {
   activateMagazineSubscriber,
   getCategories,
   getTypes,
-  searchMagazineSubscribers
+  searchMagazineSubscribers,
 };

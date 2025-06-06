@@ -334,19 +334,29 @@ export default {
       this.currentPage = page;
 
       let params = {
-        page,
         page_size: this.pageSize,
       };
 
       if (this.searchQuery.trim()) {
+        // If searching, add search params instead of filters
         params.filter = this.searchFilter;
         params.query = this.searchQuery.trim();
+        params.page = page; // use generic 'page' param for search
       } else {
+        // Otherwise, add filter params for subscriberStatus and activeSubTab
         params.subscriberStatus =
           this.activeTab === "active" ? "active" : "inactive";
 
         if (this.activeTab === "active") {
           params.activeSubTab = this.activeSubTab;
+          if (this.activeSubTab === "current") {
+            params.page_current = page;
+          } else if (this.activeSubTab === "renewal") {
+            params.page_renewal = page;
+          }
+        } else {
+          // inactive tab
+          params.page_inactive = page;
         }
       }
 
@@ -354,15 +364,15 @@ export default {
         magazineSubscriberService
           .getMagazineSubscribers(params)
           .then((response) => {
-            // The backend now sends an object with keys for current/renewal/inactive
+            // Backend returns an object with current, renewal, inactive keys with pagination info
             const data = response.data;
 
-            // Reset all arrays to empty initially
+            // Reset all arrays first
             this.currentSubscribers = [];
             this.waitingForRenewalSubscribers = [];
             this.inactiveSubscribers = [];
 
-            // Depending on activeTab and activeSubTab, set the arrays and page counts
+            // Populate data based on current tab and subtab
             if (this.activeTab === "active") {
               if (this.activeSubTab === "current") {
                 if (data.current) {

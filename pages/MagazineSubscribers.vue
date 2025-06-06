@@ -169,7 +169,7 @@
         />
         <pagination
           :current-page="currentPage"
-          :total-pages="totalPages"
+          :total-pages="currentPageTotalPages"
           @page-changed="changePage"
           :disabled="isLoading"
         />
@@ -187,7 +187,7 @@
         />
         <pagination
           :current-page="currentPage"
-          :total-pages="totalPages"
+          :total-pages="renewalPageTotalPages"
           @page-changed="changePage"
           :disabled="isLoading"
         />
@@ -212,7 +212,7 @@
       />
       <pagination
         :current-page="currentPage"
-        :total-pages="totalPages"
+        :total-pages="inactivePageTotalPages"
         @page-changed="changePage"
         :disabled="isLoading"
       />
@@ -281,7 +281,12 @@ export default {
       searchFilter: "name",
 
       currentPage: 1,
-      totalPages: 1,
+      totalPages: 1, // Default for current tab/subtab, not used now
+      // We'll maintain separate page counts:
+      currentPageTotalPages: 1,
+      renewalPageTotalPages: 1,
+      inactivePageTotalPages: 1,
+
       pageSize: 10,
     };
   },
@@ -321,7 +326,9 @@ export default {
   methods: {
     resetPagination() {
       this.currentPage = 1;
-      this.totalPages = 1;
+      this.currentPageTotalPages = 1;
+      this.renewalPageTotalPages = 1;
+      this.inactivePageTotalPages = 1;
     },
     loadSubscribers(page = 1) {
       this.currentPage = page;
@@ -331,7 +338,6 @@ export default {
         page_size: this.pageSize,
       };
 
-      // Search params take precedence
       if (this.searchQuery.trim()) {
         params.filter = this.searchFilter;
         params.query = this.searchQuery.trim();
@@ -348,35 +354,49 @@ export default {
         magazineSubscriberService
           .getMagazineSubscribers(params)
           .then((response) => {
-            const subscribers = response.data.results || [];
-            const totalCount = response.data.count || 0;
+            // The backend now sends an object with keys for current/renewal/inactive
+            const data = response.data;
 
-            const sortedSubscribers = subscribers.sort((a, b) =>
-              b._id.localeCompare(a._id)
-            );
+            // Reset all arrays to empty initially
+            this.currentSubscribers = [];
+            this.waitingForRenewalSubscribers = [];
+            this.inactiveSubscribers = [];
 
+            // Depending on activeTab and activeSubTab, set the arrays and page counts
             if (this.activeTab === "active") {
               if (this.activeSubTab === "current") {
-                this.currentSubscribers = sortedSubscribers.filter(
-                  (s) => !s.isDeleted && s.hasActiveSubscriptions
-                );
+                if (data.current) {
+                  this.currentSubscribers = data.current.results || [];
+                  this.currentPageTotalPages = Math.ceil(
+                    (data.current.count || 0) / this.pageSize
+                  );
+                }
                 this.waitingForRenewalSubscribers = [];
-              } else {
-                this.waitingForRenewalSubscribers = sortedSubscribers.filter(
-                  (s) => !s.isDeleted && !s.hasActiveSubscriptions
-                );
+                this.renewalPageTotalPages = 1;
+              } else if (this.activeSubTab === "renewal") {
+                if (data.renewal) {
+                  this.waitingForRenewalSubscribers = data.renewal.results || [];
+                  this.renewalPageTotalPages = Math.ceil(
+                    (data.renewal.count || 0) / this.pageSize
+                  );
+                }
                 this.currentSubscribers = [];
+                this.currentPageTotalPages = 1;
               }
               this.inactiveSubscribers = [];
+              this.inactivePageTotalPages = 1;
             } else {
-              this.inactiveSubscribers = sortedSubscribers.filter(
-                (s) => s.isDeleted
-              );
+              if (data.inactive) {
+                this.inactiveSubscribers = data.inactive.results || [];
+                this.inactivePageTotalPages = Math.ceil(
+                  (data.inactive.count || 0) / this.pageSize
+                );
+              }
               this.currentSubscribers = [];
               this.waitingForRenewalSubscribers = [];
+              this.currentPageTotalPages = 1;
+              this.renewalPageTotalPages = 1;
             }
-
-            this.totalPages = Math.ceil(totalCount / this.pageSize);
           })
           .catch((error) => {
             this.$refs.toast.showToast(
@@ -392,7 +412,16 @@ export default {
       );
     },
     changePage(newPage) {
-      if (newPage < 1 || newPage > this.totalPages) return;
+      if (
+        newPage < 1 ||
+        (this.activeTab === "active" &&
+          ((this.activeSubTab === "current" &&
+            newPage > this.currentPageTotalPages) ||
+            (this.activeSubTab === "renewal" &&
+              newPage > this.renewalPageTotalPages))) ||
+        (this.activeTab === "inactive" && newPage > this.inactivePageTotalPages)
+      )
+        return;
       this.loadSubscribers(newPage);
     },
     switchTab(tab) {

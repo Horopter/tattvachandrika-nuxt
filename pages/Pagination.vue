@@ -5,10 +5,12 @@
     v-if="totalPages > 1"
   >
     <button
-      class="px-3 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-      :disabled="currentPage === 1"
+      class="px-3 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+      :disabled="currentPage === 1 || disabled"
       @click="$emit('page-changed', currentPage - 1)"
       aria-label="Previous Page"
+      :aria-disabled="currentPage === 1 || disabled"
+      tabindex="0"
     >
       Prev
     </button>
@@ -19,18 +21,25 @@
       @click="$emit('page-changed', page)"
       :class="[
         'px-3 py-1 rounded-md border border-gray-300',
-        page === currentPage ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+        page === currentPage
+          ? 'bg-blue-600 text-white cursor-default'
+          : 'bg-white text-gray-700 hover:bg-gray-100 cursor-pointer'
       ]"
       :aria-current="page === currentPage ? 'page' : null"
+      :disabled="disabled"
+      :aria-disabled="disabled"
+      tabindex="0"
     >
       {{ page }}
     </button>
 
     <button
-      class="px-3 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-      :disabled="currentPage === totalPages"
+      class="px-3 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+      :disabled="currentPage === totalPages || disabled"
       @click="$emit('page-changed', currentPage + 1)"
       aria-label="Next Page"
+      :aria-disabled="currentPage === totalPages || disabled"
+      tabindex="0"
     >
       Next
     </button>
@@ -47,6 +56,10 @@ export default {
     totalPages: {
       type: Number,
       required: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

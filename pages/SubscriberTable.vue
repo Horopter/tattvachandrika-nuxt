@@ -1,5 +1,5 @@
 <template>
-<Loader v-if="isLoading" />
+  <Loader v-if="loading" />
   <table class="min-w-full bg-white divide-y divide-gray-300 shadow-md rounded-lg overflow-hidden">
     <thead class="bg-gray-100">
       <tr>
@@ -77,27 +77,26 @@
   </table>
 </template>
 
-<script>
-export default {
-  name: 'SubscriberTable',
-  props: {
-    subscribers: {
-      type: Array,
-      required: true,
-      default: () => []
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    showDelete: {
-      type: Boolean,
-      default: false
-    },
-    showActivate: {
-      type: Boolean,
-      default: false
-    }
+<script setup>
+import Loader from '~/components/Loader.vue'
+
+defineProps({
+  subscribers: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  showDelete: {
+    type: Boolean,
+    default: false
+  },
+  showActivate: {
+    type: Boolean,
+    default: false
   }
-};
+})
 </script>

@@ -547,7 +547,7 @@ export default defineComponent({
     },
     getPlanName(planId) {
       const plan = this.subscriptionPlans.find((plan) => plan._id === planId);
-      return plan ? plan.name : "";
+      return plan ? `${plan.name} - ${plan.version}` : "";
     },
     getPaymentModeName(modeId) {
       const mode = this.paymentModes.find((mode) => mode._id === modeId);

@@ -1,54 +1,54 @@
 <template>
-  <div class="container mx-auto mt-8 px-4 relative">
+  <div class="container mx-auto mt-10 px-6 relative">
     <!-- Loader Component -->
     <Loader v-if="isLoading" />
 
+    <h2 class="text-3xl font-semibold text-gray-900 mb-6">Subscriber Categories</h2>
+
     <!-- Breadcrumb Navigation -->
-    <nav aria-label="breadcrumb" class="mb-6">
-      <ol class="flex items-center space-x-2 text-gray-700">
+    <nav aria-label="breadcrumb" class="mb-8">
+      <ol class="flex space-x-2 text-gray-600">
         <li>
-          <router-link to="/HomePage" class="text-blue-600 hover:text-blue-700 transition-colors">
+          <router-link to="/HomePage" class="text-indigo-600 hover:text-indigo-800 font-medium">
             Home
           </router-link>
         </li>
         <li>
-          <span class="text-gray-400">/</span>
+          <span>/</span>
         </li>
-        <li aria-current="page" class="text-gray-500">
-          Subscriber Categories
-        </li>
+        <li class="text-gray-500 font-medium" aria-current="page">Subscriber Categories</li>
       </ol>
     </nav>
 
     <!-- Categories Table -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 bg-white shadow-lg rounded-lg overflow-hidden">
-        <thead class="bg-gray-100">
+    <div class="shadow-lg overflow-hidden border border-gray-300 sm:rounded-xl">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-200">
           <tr>
-            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase">Name</th>
-            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase">Actions</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="bg-white divide-y divide-gray-100">
           <!-- Add New Category Row -->
-          <tr v-if="addingNew" class="bg-gray-50">
+          <tr v-if="addingNew">
             <td class="px-6 py-4">
               <input
                 type="text"
                 v-model="newSubscriberCategory.name"
-                class="border border-gray-300 focus:ring focus:ring-blue-100 focus:border-blue-300 rounded-md w-full px-4 py-2"
-                placeholder="New Category Name"
+                class="border border-gray-300 px-4 py-2 rounded-full w-full focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                placeholder="Enter category name"
               />
             </td>
             <td class="px-6 py-4">
               <button
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2 transition-all"
+                class="bg-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 mr-2"
                 @click="saveNewSubscriberCategory"
               >
                 Save
               </button>
               <button
-                class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+                class="bg-gray-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 @click="cancelNewSubscriberCategory"
               >
                 Cancel
@@ -57,28 +57,24 @@
           </tr>
 
           <!-- Existing Categories Rows -->
-          <tr
-            v-for="category in subscriberCategories"
-            :key="category._id"
-            class="hover:bg-gray-50 transition-colors"
-          >
+          <tr v-for="category in subscriberCategories" :key="category._id" class="hover:bg-gray-50 transition duration-150">
             <template v-if="editMode === category._id">
               <td class="px-6 py-4">
                 <input
                   type="text"
                   v-model="editSubscriberCategory.name"
-                  class="border border-gray-300 focus:ring focus:ring-blue-100 focus:border-blue-300 rounded-md w-full px-4 py-2"
+                  class="border border-gray-300 px-4 py-2 rounded-full w-full focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                 />
               </td>
-              <td class="px-6 py-4">
+              <td class="px-6 py-4 flex space-x-2">
                 <button
-                  class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2 transition-all"
+                  class="bg-indigo-600 text-white px-5 py-2 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   @click="updateSubscriberCategory(category._id)"
                 >
                   Save
                 </button>
                 <button
-                  class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+                  class="bg-gray-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
                   @click="cancelEdit"
                 >
                   Cancel
@@ -86,18 +82,16 @@
               </td>
             </template>
             <template v-else>
-              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">
-                {{ category.name }}
-              </td>
-              <td class="px-6 py-4">
+              <td class="px-6 py-4 text-md font-semibold text-gray-700 font-sans">{{ category.name }}</td>
+              <td class="px-6 py-4 flex items-center space-x-3">
                 <button
-                  class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 mr-2 transition-all"
+                  class="bg-yellow-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   @click="editSubscriberCategoryFunc(category)"
                 >
                   Edit
                 </button>
                 <button
-                  class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                  class="bg-red-500 text-white px-5 py-2 rounded-full shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
                   @click="showDeleteModal(category._id)"
                 >
                   Delete
@@ -110,12 +104,14 @@
     </div>
 
     <!-- Add New Category Button -->
-    <button
-      class="mt-6 bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-      @click="startAddingNew"
-    >
-      Add New Category
-    </button>
+    <div class="mt-6">
+      <button
+        class="bg-teal-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+        @click="startAddingNew"
+      >
+        Add New Category
+      </button>
+    </div>
 
     <!-- Confirmation Modal -->
     <confirmation-modal
@@ -239,5 +235,5 @@ export default {
 </script>
 
 <style scoped>
-/* Custom styles for better UX */
+/* Add custom styles for smooth hover effects and modern design */
 </style>

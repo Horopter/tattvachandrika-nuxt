@@ -180,10 +180,11 @@
         <subscriber-table
           :subscribers="waitingForRenewalSubscribers"
           :loading="isLoading"
-          :show-delete="false"
+          :show-delete="true"
           :show-activate="false"
           @view="viewSubscriber"
           @edit="openEditSubscriberModal"
+          @delete="confirmDeleteSubscriber"
         />
         <pagination
           :current-page="currentPage"

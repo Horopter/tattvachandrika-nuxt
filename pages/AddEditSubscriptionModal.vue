@@ -66,7 +66,7 @@
                 :value="plan._id"
                 :key="plan._id"
               >
-                {{ plan.name - plan.version }}
+                {{ `${plan.name} - ${plan.version}` }}
               </option>
             </select>
           </div>

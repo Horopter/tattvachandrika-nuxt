@@ -345,7 +345,9 @@ export default {
         params.filter = this.searchFilter;
         params.query = this.searchQuery.trim();
         params.page = page; // use generic 'page' param for search
-        params.subscriberStatus =
+      }
+
+      params.subscriberStatus =
           this.activeTab === "active" ? "active" : "inactive";
 
         if (this.activeTab === "active") {
@@ -359,7 +361,6 @@ export default {
           // inactive tab
           params.page_inactive = page;
         }
-      }
 
       return this.runWithLoader(() =>
         magazineSubscriberService

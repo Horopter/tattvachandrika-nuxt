@@ -71,29 +71,29 @@
           </div>
 
           <div class="mb-4">
-            <label for="city_town" class="block text-sm font-medium text-gray-700">City/Town</label>
-            <input
-              type="text"
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
-              id="city_town"
-              v-model="localSubscriber.city_town"
-              pattern="^[A-Za-z\s]+$"
-              title="City/Town name should only contain letters and spaces."
-              autocomplete="off"
-            />
-           </div>
-           
-           <div class="mb-4">
             <label for="state" class="block text-sm font-medium text-gray-700">State</label>
-            <input
-              type="text"
+            <select
               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
               id="state"
-              v-model="localSubscriber.state"
-              pattern="^[A-Za-z\s]+$"
-              title="State name should only contain letters and spaces."
-              autocomplete="off"
-            />
+              v-model="selectedState"
+              required
+            >
+              <option value="" disabled>Select State</option>
+              <option v-for="state in states" :key="state" :value="state">{{ state }}</option>
+            </select>
+          </div>
+
+          <div class="mb-4" v-if="districts.length">
+            <label for="city_town" class="block text-sm font-medium text-gray-700">District</label>
+            <select
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base p-2"
+              id="city_town"
+              v-model="selectedDistrict"
+              required
+            >
+              <option value="" disabled>Select District</option>
+              <option v-for="district in districts" :key="district" :value="district">{{ district }}</option>
+            </select>
           </div>
 
           <div class="mb-4">
@@ -106,7 +106,9 @@
               pattern="^[0-9]{6}$"
               title="Pincode must be exactly 6 digits."
               autocomplete="off"
+              @input="validatePincode"
             />
+            <p v-if="pincodeError" class="text-red-500 text-sm">{{ pincodeError }}</p>
           </div>
 
           <div class="mb-4">
@@ -199,6 +201,7 @@
       </template>
 
 <script>
+import stateDistrictData from '../state-district.json';
 export default {
   props: {
     show: Boolean,
@@ -208,7 +211,12 @@ export default {
   },
   data() {
     return {
-      localSubscriber: { ...this.subscriber }
+      localSubscriber: { ...this.subscriber },
+      states: Object.keys(stateDistrictData),
+      districts: [],
+      selectedState: this.subscriber.state || '',
+      selectedDistrict: this.subscriber.city_town || '',
+      pincodeError: ''
     };
   },
   computed: {
@@ -220,15 +228,52 @@ export default {
     }
   },
   watch: {
+    selectedState(newState) {
+      if (newState) {
+        this.districts = Object.keys(stateDistrictData[newState]);
+        this.localSubscriber.state = newState;
+        this.selectedDistrict = '';
+        this.localSubscriber.city_town = '';
+      } else {
+        this.districts = [];
+        this.selectedDistrict = '';
+        this.localSubscriber.state = '';
+        this.localSubscriber.city_town = '';
+      }
+    },
+    selectedDistrict(newDistrict) {
+      this.localSubscriber.city_town = newDistrict;
+    },
     subscriber(newVal) {
       this.localSubscriber = { ...newVal };
+      this.selectedState = newVal.state || '';
+      this.selectedDistrict = newVal.city_town || '';
+      if (this.selectedState) {
+        this.districts = Object.keys(stateDistrictData[this.selectedState]);
+      } else {
+        this.districts = [];
+      }
     }
   },
   methods: {
     close() {
       this.$emit('close');
     },
+    validatePincode() {
+      this.pincodeError = '';
+      const state = this.selectedState;
+      const district = this.selectedDistrict;
+      const pincode = this.localSubscriber.pincode;
+      if (state && district && pincode) {
+        const pincodes = stateDistrictData[state][district] || [];
+        if (!pincodes.includes(pincode)) {
+          this.pincodeError = 'Pincode does not exist in the selected state and district.';
+        }
+      }
+    },
     handleSubmit() {
+      this.validatePincode();
+      if (this.pincodeError) return;
       this.$emit('save', this.localSubscriber);
       this.close();
     }

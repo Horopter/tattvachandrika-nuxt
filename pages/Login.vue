@@ -3,11 +3,14 @@
     <!-- Loader Component -->
     <Loader v-if="isLoading" />
 
-    <!-- Header -->
+    <!-- Header (replicated from index.vue) -->
     <header class="bg-orange-50">
-      <div class="container mx-auto flex justify-between items-center p-4">
+      <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-xl font-bold text-orange-700">Hari Sarvottama</h1>
-        <img src="../assets/images/Hanuma1.png" alt="hanuma" />
+        <img
+          src="../assets/images/Hanuma1.png"
+          alt="hanuma"
+        />
         <div class="relative flex flex-col items-center">
           <svg width="300" height="200">
             <defs>
@@ -17,7 +20,11 @@
               />
             </defs>
             <text>
-              <textPath xlink:href="#curve" startOffset="25%" text-anchor="middle">
+              <textPath
+                xlink:href="#curve"
+                startOffset="25%"
+                text-anchor="middle"
+              >
                 Sri Moola Gopala Krishno Vijayathe
               </textPath>
             </text>
@@ -29,16 +36,28 @@
             style="top: 80px; left: 50%; transform: translateX(-50%)"
           />
         </div>
-        <img src="../assets/images/hanuma2.png" alt="Bheema" />
+        <img
+          src="../assets/images/hanuma2.png"
+          alt="Bheema"
+        />
         <h1 class="text-xl font-bold text-orange-700">Vaayu Jeevottama</h1>
       </div>
     </header>
 
+    <!-- Institution Name (replicated from index.vue) -->
+    <section class="text-orange-800 text-center py-4 bg-orange-100">
+      <h2 class="text-2xl font-bold">
+        Sri Jagadguru Sriman Madhvacharya Moola Maha Samsthanam
+      </h2>
+      <h3 class="text-xl">Sri Rajendratirthiya Poorvadi Matha</h3>
+      <h3 class="font-bold text-2xl">Sri Vyasaraaja Matha (Sosale)</h3>
+    </section>
+
     <!-- Main content -->
     <main class="container mx-auto mt-6 p-6">
-      <div class="bg-white rounded-lg shadow-lg p-6 mt-4">
+      <div class="bg-white rounded-lg shadow-lg p-6 mt-4 mx-auto login-card">
         <h2 class="text-3xl font-bold text-center mb-4 text-orange-800">
-          Welcome to Tattva Chandrika Login and Signup 
+          Welcome to Tattva Chandrika Magazine Portal
         </h2>
 
         <div class="tabs mb-6">
@@ -79,7 +98,7 @@
           </form>
         </div>
 
-        <div v-if="currentTab === 'signup'" class="form">
+        <!-- <div v-if="currentTab === 'signup'" class="form">
           <h2 class="text-xl font-bold text-center">Sign Up</h2>
           <form @submit.prevent="signup">
             <input
@@ -172,6 +191,11 @@
 
             <button type="submit" class="submit-button">Sign Up</button>
           </form>
+        </div> -->
+        <div v-if="currentTab === 'signup'" class="form">
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
+          <p class="font-semibold">Signup option unavailable. Please contact the development team.</p>
+        </div>
         </div>
 
         <toast-message
@@ -321,6 +345,16 @@ export default {
 </script>
 
 <style scoped>
+svg text {
+  font-size: 18px;
+  font-weight: bold;
+  fill: rgb(141, 12, 12);
+}
+
+header {
+  padding: 10px 0;
+}
+
 .bg-amber-50 {
   background-color: #fbbf24;
 }
@@ -335,9 +369,6 @@ export default {
 }
 .text-orange-800 {
   color: #9a3412;
-}
-.container {
-  max-width: 600px;
 }
 .tabs {
   display: flex;
@@ -380,5 +411,9 @@ export default {
 .error-message {
   color: red;
   font-size: 0.875rem;
+}
+.login-card {
+  max-width: 500px;
+  width: 100%;
 }
 </style>
